@@ -5,6 +5,7 @@ export default function Home() {
   return (
     <div>
       <MoviesList />
+      yup
     </div>
   );
 }
