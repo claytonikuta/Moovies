@@ -3,7 +3,6 @@ import { SegmentedControl } from '@mantine/core';
 import axios from 'axios';
 import styles from './MoviesList.module.css';
 
-
 const colorMap = new Map();
 
 colorMap.set('Popular', 'grey');
