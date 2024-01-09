@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { SegmentedControl } from '@mantine/core';
 import axios from 'axios';
-import styles from './moviesList.module.css';
+import styles from './MoviesList.module.css';
 
 const colorMap = new Map();
 
