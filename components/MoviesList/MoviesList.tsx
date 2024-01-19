@@ -5,7 +5,7 @@ import styles from './MoviesList.module.css';
 
 const colorMap = new Map();
 
-colorMap.set('Popular', 'grey');
+colorMap.set('Popular', 'black');
 colorMap.set('Top Rated', 'red');
 colorMap.set('Now Playing', 'blue');
 colorMap.set('Upcoming', 'violet');
@@ -16,6 +16,8 @@ export default function MoviesList() {
     title: string;
     overview: string;
     poster_path?: string; // The '?' means this property is optional
+    release_date: string;
+    vote_average: number;
   }
 
   const [movies, setMovies] = useState<Movie[]>([]);
@@ -43,20 +45,30 @@ export default function MoviesList() {
   };
 
   return (
-    <div className={styles.moviesList}>
-      <SegmentedControl className={styles.segmentedControl} onChange={handleSelected} color={colorMap.get(selected)} data={['Popular', 'Top Rated', 'Now Playing', 'Upcoming']} />
-
-      {movies.map((movie: Movie) => (
-        <div key={movie.id} className="movie-card">
-          <h2>{movie.title}</h2>
-          <p>{movie.overview}</p>
-          {movie.poster_path ? (
-            <img src={`https://image.tmdb.org/t/p/w500${movie.poster_path}`} alt={movie.title} />
-          ) : (
-            <p>No image available</p>
-          )}
-        </div>
-      ))}
+    <div className={styles.moviesMain}>
+      <div className={styles.moviesSegment}>
+        <SegmentedControl className={styles.segmentedControl} onChange={handleSelected} color={colorMap.get(selected)} data={['Popular', 'Top Rated', 'Now Playing', 'Upcoming']} />
+      </div>
+      <div className={styles.moviesList}>
+        {movies.map((movie: Movie) => (
+          <div key={movie.id} className={styles.movieCard}>
+            <h2>{movie.title}</h2>
+            {movie.poster_path ? (
+              <img src={`https://image.tmdb.org/t/p/w500${movie.poster_path}`} alt={movie.title} />
+            ) : (
+              <img src="path/to/your/placeholder/image.jpg" alt="placeholder" />
+            )}
+            <p>Release date: {movie.release_date}</p>
+            <p>Rating: {Math.round(movie.vote_average * 10)}%</p>
+            <p>{movie.overview}</p>
+            {/* <button onClick={() => handleMoreInfo(movie.id)}>More Info</button> */}
+          </div>
+        ))}
+      </div>
     </div>
   );
+  // const handleMoreInfo = (id: number) => {
+  //   // Navigate to the individual movie page
+  //   // This depends on how you've set up your routing
+  // };
 }
