@@ -31,16 +31,16 @@ export default function Navbar() {
         </Group>
 
         <Group>
+          <Group ml={10} gap={5} className={styles.links} visibleFrom="sm" style={{ marginRight: '20px', fontSize: '18px' }}>
+            {items}
+          </Group>
           <Autocomplete
             className={styles.search}
             placeholder="Search"
             leftSection={<IconSearch style={{ width: rem(16), height: rem(16) }} stroke={1.5} />}
-            data={['React', 'Angular', 'Vue', 'Next.js', 'Riot.js', 'Svelte', 'Blitz.js']}
+            data={['']}
             visibleFrom="xs"
           />
-          <Group ml={10} gap={5} className={styles.links} visibleFrom="sm" style={{ marginRight: '20px' }}>
-            {items}
-          </Group>
         </Group>
       </div>
     </nav>

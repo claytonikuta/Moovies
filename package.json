@@ -26,8 +26,10 @@
     "@tabler/icons-react": "^2.40.0",
     "axios": "^1.6.5",
     "next": "14.0.1",
+    "next-auth": "^4.24.6",
     "react": "18.2.0",
     "react-dom": "18.2.0",
+    "react-multi-carousel": "^2.8.4",
     "sharp": "^0.33.1",
     "yarn": "^1.22.21"
   },
