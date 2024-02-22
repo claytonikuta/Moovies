@@ -2,11 +2,7 @@
 import { MongoClient } from 'mongodb';
 
 declare global {
-  namespace NodeJS {
-    interface Global {
-      _mongoClientPromise: Promise<MongoClient>;
-    }
-  }
+  var _mongoClientPromise: Promise<MongoClient>;
 }
 
 if (!process.env.MONGODB_URI) {
@@ -26,7 +22,7 @@ if (process.env.NODE_ENV === 'development') {
     client = new MongoClient(uri, options);
     global._mongoClientPromise = client.connect();
   }
-  clientPromise = global._mongoClientPromise
+  clientPromise = global._mongoClientPromise;
 } else {
   // In production mode, it's best to not use a global variable.
   client = new MongoClient(uri, options);
