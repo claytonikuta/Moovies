@@ -1,12 +1,7 @@
 import { useEffect, useState } from 'react';
-import { SegmentedControl, Menu, Button, Text, rem } from '@mantine/core';
+import { SegmentedControl, Menu, Button, rem } from '@mantine/core';
 import axios from 'axios';
-import {
-  IconChecks,
-  IconClockPlus,
-  IconPlaylistAdd,
-  IconHeart,
-} from '@tabler/icons-react';
+import { IconChecks, IconClockPlus, IconPlaylistAdd, IconHeart } from '@tabler/icons-react';
 import styles from './MoviesList.module.css';
 
 const colorMap = new Map();
@@ -16,14 +11,29 @@ colorMap.set('Top Rated', 'red');
 colorMap.set('Now Playing', 'blue');
 colorMap.set('Upcoming', 'violet');
 
-// const toggleFavorite = async (movieId) => {
-//   try {
-//     await axios.post(`/api/favourites/${movieId}`);
-//     // Update UI to reflect favorite status – for demonstration it requires additional implementation details
-//   } catch (error) {
-//     console.error('An error occurred while updating favorites.', error);
-//   }
-// };
+const toggleFavorite = async (movieId: number) => {
+  try {
+    await axios.post(`/api/favourites/${movieId}`);
+  } catch (error) {
+    console.error('An error occurred while updating favorites.', error);
+  }
+};
+
+const toggleWatched = async (movieId: number) => {
+  try {
+    await axios.post(`/api/watched/${movieId}`);
+  } catch (error) {
+    console.error('An error occurred while updating favorites.', error);
+  }
+};
+
+const toggleWatchList = async (movieId: number) => {
+  try {
+    await axios.post(`/api/watchlist/${movieId}`);
+  } catch (error) {
+    console.error('An error occurred while updating favorites.', error);
+  }
+};
 
 export default function MoviesList() {
   interface Movie {
@@ -40,22 +50,24 @@ export default function MoviesList() {
   const [expandedMovieId, setExpandedMovieId] = useState<number | null>(null);
 
   useEffect(() => {
-    axios.get('/api/movies')
-      .then(response => {
+    axios
+      .get('/api/movies')
+      .then((response) => {
         setMovies(response.data);
       })
-      .catch(error => {
+      .catch((error) => {
         console.error('An error occurred while fetching data from the MovieDB API', error);
       });
   }, []);
 
   const handleSelected = (value: string) => {
     setSelected(value);
-    axios.get(`/api/movies/?listType=${value}`)
-      .then(response => {
+    axios
+      .get(`/api/movies/?listType=${value}`)
+      .then((response) => {
         setMovies(response.data);
       })
-      .catch(error => {
+      .catch((error) => {
         console.error('An error occurred while fetching data from the MovieDB API', error);
       });
   };
@@ -84,29 +96,36 @@ export default function MoviesList() {
             <h2>{movie.title}</h2>
             <div className={styles.posterWrapper}>
               {movie.poster_path ? (
-                <img src={`https://image.tmdb.org/t/p/w500${movie.poster_path}`} alt={movie.title} />
+                <img
+                  src={`https://image.tmdb.org/t/p/w500${movie.poster_path}`}
+                  alt={movie.title}
+                />
               ) : (
                 <img src="path/to/your/placeholder/image.jpg" alt="placeholder" />
               )}
               <div className={styles.menuWrapper}>
                 <Menu position="bottom-end" shadow="md" width={200}>
                   <Menu.Target>
-                    <Button style={{ backgroundColor: 'rgba(0, 0, 0, 0)', padding: 0 }}><IconPlaylistAdd /></Button>              
+                    <Button style={{ backgroundColor: 'rgba(0, 0, 0, 0)', padding: 0 }}>
+                      <IconPlaylistAdd />
+                    </Button>
                   </Menu.Target>
                   <Menu.Dropdown style={{ backgroundColor: 'rgba(0, 0, 0, 0.9)' }}>
                     <Menu.Item
                       leftSection={<IconHeart style={{ width: rem(14), height: rem(14) }} />}
-                      // onClick={() => toggleFavorite(movie.id)}
+                      onClick={() => toggleFavorite(movie.id)}
                     >
-                        Add to Favourites
+                      Add to Favourites
                     </Menu.Item>
                     <Menu.Item
                       leftSection={<IconClockPlus style={{ width: rem(14), height: rem(14) }} />}
+                      onClick={() => toggleWatchList(movie.id)}
                     >
                       Add to Watchlist
                     </Menu.Item>
                     <Menu.Item
                       leftSection={<IconChecks style={{ width: rem(14), height: rem(14) }} />}
+                      onClick={() => toggleWatched(movie.id)}
                     >
                       Add to Watched
                     </Menu.Item>

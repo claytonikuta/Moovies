@@ -4,9 +4,9 @@ const withBundleAnalyzer = bundleAnalyzer({
   enabled: process.env.ANALYZE === 'true',
 });
 
-export default withBundleAnalyzer({
-  reactStrictMode: false,
-  eslint: {
-    ignoreDuringBuilds: true,
+export default {
+  reactStrictMode: true,
+  babel: {
+    presets: [['next/babel', { 'jsc.transform.react.throwIfNamespace': false }]],
   },
-});
+};

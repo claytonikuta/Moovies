@@ -1,14 +1,16 @@
-import { getSession } from "next-auth/react";
+import { getSession } from 'next-auth/react';
 import { Favourite } from '../../../models/favourites.ts';
 import mongooseConnector from '../../../lib/db/mongooseConnect.ts';
 
 export default async function handler(req, res) {
   await mongooseConnector();
-  
+
   const session = await getSession({ req });
-  
+
   if (!session) {
-    return res.status(401).json({ error: 'You must be signed in to view the protected content on this page.' });
+    return res
+      .status(401)
+      .json({ error: 'You must be signed in to view the protected content on this page.' });
   }
 
   const userId = session.user.id;
@@ -16,14 +18,14 @@ export default async function handler(req, res) {
 
   if (req.method === 'POST') {
     try {
-      const favorite = await Favourite.create({ user: userId, movie: movieId });
+      const favorite = await Favourite.create({ user: userId, movieId: movieId });
       res.status(200).json(favorite);
     } catch (error) {
       res.status(500).json({ error: error.message });
     }
   } else if (req.method === 'DELETE') {
     try {
-      const favorite = await Favourite.findOneAndDelete({ user: userId, movie: movieId });
+      const favorite = await Favourite.findOneAndDelete({ user: userId, movieId: movieId });
       if (favorite) {
         res.status(204).end();
       } else {

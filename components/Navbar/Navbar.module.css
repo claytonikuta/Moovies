@@ -44,12 +44,28 @@
   margin-bottom: 15px;
 }
 
-.search{
+.search {
   /* margin-top: 20px; */
   margin-right: 20px;
   /* margin-bottom: 15px; */
 }
 
-.links{
+.links {
   font-size: 30px;
+}
+
+.gsi-material-button-content-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 12px;
+}
+
+.gsi-material-button-icon {
+  margin-right: 12px;
+}
+
+.gsi-material-button-contents {
+  font-size: 14px;
+  font-weight: 500;
 }

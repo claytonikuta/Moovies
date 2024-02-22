@@ -7,38 +7,38 @@ export const authOptions = {
   adapter: MongoDBAdapter(clientPromise),
   providers: [
     GoogleProvider({
-        clientId: process.env.GOOGLE_CLIENT_ID ?? '',
-        clientSecret: process.env.GOOGLE_CLIENT_SECRET ?? '',
+      clientId: process.env.GOOGLE_CLIENT_ID ?? '',
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET ?? '',
     }),
   ],
   callbacks: {
     // @ts-ignore
-    async signIn ({ account, profile }) {
-      if (account.provider === "google") {
+    async signIn({ account, profile }) {
+      if (account.provider === 'google') {
         return true;
       }
     },
     // @ts-ignore
-    async jwt ({ user, token }) {
-        if (user) {
-            token.uid = user.id;
-            if(user?.role) {
-                token.role = user?.role;
-            }
-            if(user?.token) {
-                token.hasToken = true;
-            }
+    async jwt({ user, token }) {
+      if (user) {
+        token.uid = user.id;
+        if (user?.role) {
+          token.role = user?.role;
         }
-        return token;
+        if (user?.token) {
+          token.hasToken = true;
+        }
+      }
+      return token;
     },
     // @ts-ignore
     async session({ session, token }) {
-        if (session?.user) {
-            session.user.id = token.uid;
-            session.user.role = token?.role;
-            session.user.hasToken = token?.hasToken;
-        }
-        return session;
+      if (session?.user) {
+        session.user.id = token.uid;
+        session.user.role = token?.role;
+        session.user.hasToken = token?.hasToken;
+      }
+      return session;
     },
   },
   session: {

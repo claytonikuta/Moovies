@@ -22,7 +22,7 @@ const FavouritesList: React.FC = () => {
         const response = await axios.get('/api/favourites'); // Adjust API endpoint as needed
         setFavoriteMovies(response.data.favorites);
         setLoading(false);
-      } catch (error) {
+      } catch (err) {
         setError('An error occurred while fetching favorite movies.');
         setLoading(false);
       }
@@ -36,8 +36,8 @@ const FavouritesList: React.FC = () => {
       // Make API call to remove movie from favorites
       await axios.delete(`/api/favourites/${movieId}`); // Adjust API endpoint as needed
       // Update local state to reflect the removal
-      setFavoriteMovies(prevMovies => prevMovies.filter(movie => movie.id !== movieId));
-    } catch (error) {
+      setFavoriteMovies((prevMovies) => prevMovies.filter((movie) => movie.id !== movieId));
+    } catch (err) {
       setError('An error occurred while removing the movie from favorites.');
     }
   };
@@ -56,7 +56,7 @@ const FavouritesList: React.FC = () => {
       {favoriteMovies.length === 0 ? (
         <p>No favorite movies added yet.</p>
       ) : (
-        favoriteMovies.map(movie => (
+        favoriteMovies.map((movie) => (
           <div key={movie.id} className={styles.movieItem}>
             <img src={`https://image.tmdb.org/t/p/w500${movie.poster_path}`} alt={movie.title} />
             <div>
@@ -64,7 +64,9 @@ const FavouritesList: React.FC = () => {
               <p>Release Date: {movie.release_date}</p>
               <p>Rating: {Math.round(movie.vote_average * 10)}%</p>
               <p>{movie.overview}</p>
-              <button onClick={() => handleRemoveFavorite(movie.id)}>Remove from Favorites</button>
+              <button type="button" onClick={() => handleRemoveFavorite(movie.id)}>
+                Remove from Favorites
+              </button>{' '}
             </div>
           </div>
         ))
