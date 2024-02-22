@@ -18,7 +18,7 @@ interface Trailer {
 
 export default async function handler(
   req: NextApiRequest,
-  res: NextApiResponse<{ movie: Movie; trailer: Trailer; } | { error: string; }>
+  res: NextApiResponse<{ movie: Movie; trailer: Trailer } | { error: string }>
 ) {
   const { id } = req.query;
 

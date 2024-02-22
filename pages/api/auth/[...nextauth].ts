@@ -13,7 +13,7 @@ export const authOptions = {
   ],
   callbacks: {
     // @ts-ignore
-    async signIn({ account, profile }) {
+    async signIn({ account }) {
       if (account.provider === 'google') {
         return true;
       }

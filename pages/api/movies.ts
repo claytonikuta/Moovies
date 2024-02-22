@@ -1,8 +1,7 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import axios from 'axios';
 
-const MOVIEDB_API_URL = 'https://api.themoviedb.org/3/discover/movie';
-const API_KEY = 'b137b0ed3bd802c92e40d0c241b6751c'
+const API_KEY = 'b137b0ed3bd802c92e40d0c241b6751c';
 
 type MovieData = {
   id: number;
@@ -44,20 +43,23 @@ export default function handler(
         apiUrl = 'https://api.themoviedb.org/3/movie/popular';
     }
 
-    axios.get(apiUrl, {
-      params: {
-        api_key: API_KEY,
-        page: 1,
-      },
-    })
-    .then(response => {
-      const data = response.data.results.slice(0, 12);
-      res.status(200).json(data)
-    })
-    .catch(error => {
-      res.status(500).json({ error: 'An error occurred while fetching data from the MovieDB API' })
-    })
+    axios
+      .get(apiUrl, {
+        params: {
+          api_key: API_KEY,
+          page: 1,
+        },
+      })
+      .then((response) => {
+        const data = response.data.results.slice(0, 12);
+        res.status(200).json(data);
+      })
+      .catch(() => {
+        res
+          .status(500)
+          .json({ error: 'An error occurred while fetching data from the MovieDB API' });
+      });
   } else {
-    res.status(405).json({ error: 'Invalid request method' })
+    res.status(405).json({ error: 'Invalid request method' });
   }
 }

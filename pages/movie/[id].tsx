@@ -66,11 +66,13 @@ export default function Movie() {
   return (
     <div>
       <h1>{movie.title}</h1>
-      {movie.poster_path && <img src={`https://image.tmdb.org/t/p/w500${movie.poster_path}`} alt={movie.title} />}
+      {movie.poster_path && (
+        <img src={`https://image.tmdb.org/t/p/w500${movie.poster_path}`} alt={movie.title} />
+      )}
       <p>{movie.overview}</p>
       <div>
         <strong>Genres:</strong>
-        {genres.map(genre => (
+        {genres.map((genre) => (
           <span key={genre.id}>{genre.name}</span>
         ))}
       </div>
@@ -126,7 +128,7 @@ export default function Movie() {
         slidesToSlide={1}
         swipeable
       >
-        {trailers.map(trailer => (
+        {trailers.map((trailer) => (
           <iframe
             key={trailer.id}
             title={movie.title}
