@@ -2,12 +2,14 @@ import '@mantine/core/styles.css';
 import type { AppProps } from 'next/app';
 import Head from 'next/head';
 import { MantineProvider } from '@mantine/core';
-import { theme } from '../theme';
+import { SessionProvider } from 'next-auth/react';
+// import { theme } from '../theme';
 import Navbar from '../components/Navbar/Navbar';
 
 export default function App({ Component, pageProps }: AppProps) {
   return (
-    <MantineProvider theme={theme}>
+    // <MantineProvider theme={theme}>
+    <MantineProvider defaultColorScheme="dark">
       <Head>
         <title>P01 - Movie App</title>
         <meta
@@ -16,8 +18,10 @@ export default function App({ Component, pageProps }: AppProps) {
         />
         <link rel="shortcut icon" href="/favicon.svg" />
       </Head>
-      <Navbar />
-      <Component {...pageProps} />
+      <SessionProvider session={pageProps.session}>
+        <Navbar />
+        <Component {...pageProps} />
+      </SessionProvider>
     </MantineProvider>
   );
 }

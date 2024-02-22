@@ -1,7 +1,7 @@
-import type { NextApiRequest, NextApiResponse } from 'next'
-import axios from 'axios'
+import type { NextApiRequest, NextApiResponse } from 'next';
+import axios from 'axios';
 
-const MOVIEDB_API_URL = 'https://api.themoviedb.org/3/discover/movie'
+const MOVIEDB_API_URL = 'https://api.themoviedb.org/3/discover/movie';
 const API_KEY = 'b137b0ed3bd802c92e40d0c241b6751c'
 
 type MovieData = {

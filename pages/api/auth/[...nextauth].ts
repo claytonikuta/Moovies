@@ -1,0 +1,52 @@
+import NextAuth from 'next-auth';
+import GoogleProvider from 'next-auth/providers/google';
+import { MongoDBAdapter } from '@auth/mongodb-adapter';
+import clientPromise from '../../../lib/db/mongodb';
+
+export const authOptions = {
+  adapter: MongoDBAdapter(clientPromise),
+  providers: [
+    GoogleProvider({
+        clientId: process.env.GOOGLE_CLIENT_ID ?? '',
+        clientSecret: process.env.GOOGLE_CLIENT_SECRET ?? '',
+    }),
+  ],
+  callbacks: {
+    // @ts-ignore
+    async signIn ({ account, profile }) {
+      if (account.provider === "google") {
+        return true;
+      }
+    },
+    // @ts-ignore
+    async jwt ({ user, token }) {
+        if (user) {
+            token.uid = user.id;
+            if(user?.role) {
+                token.role = user?.role;
+            }
+            if(user?.token) {
+                token.hasToken = true;
+            }
+        }
+        return token;
+    },
+    // @ts-ignore
+    async session({ session, token }) {
+        if (session?.user) {
+            session.user.id = token.uid;
+            session.user.role = token?.role;
+            session.user.hasToken = token?.hasToken;
+        }
+        return session;
+    },
+  },
+  session: {
+    strategy: 'jwt',
+    maxAge: 30 * 24 * 60 * 60,
+    updateAge: 24 * 60 * 60,
+  },
+};
+
+// @ts-ignore
+export default NextAuth(authOptions);

@@ -1,17 +1,22 @@
 // components/Navbar.tsx
 import Link from 'next/link';
-import { Autocomplete, Group, Burger, rem } from '@mantine/core';
+import { Autocomplete, Group, Burger, rem, Button } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 import { IconSearch } from '@tabler/icons-react';
+import { signOut, signIn, useSession } from 'next-auth/react';
 import styles from './Navbar.module.css';
 
 const links = [
   { link: '/', label: 'Home' },
   { link: '/about', label: 'About' },
+  { link: '/favourites', label: 'Favourites' },
+  { link: '/watchlist', label: 'Watch List' },
+  { link: '/watched', label: 'Watched' },
 ];
 
 export default function Navbar() {
   const [opened, { toggle }] = useDisclosure(false);
+  const { status } = useSession();
 
   const items = links.map((link) => (
     <Link href={link.link} key={link.label} className={styles.link}>
@@ -41,6 +46,11 @@ export default function Navbar() {
             data={['']}
             visibleFrom="xs"
           />
+          {(status === 'authenticated') ?
+              <Button color="red" onClick={() => { signOut(); }} style={{ marginRight: '20px' }}>Sign Out</Button>
+          :
+              <Button color="blue" onClick={() => { signIn('google', { callbackUrl: window.location.origin }); }} style={{ marginRight: '20px' }}>Sign In / Register</Button>
+          }
         </Group>
       </div>
     </nav>
