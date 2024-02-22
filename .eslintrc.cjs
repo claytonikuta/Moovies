@@ -13,7 +13,7 @@ module.exports = {
   rules: {
     'react/react-in-jsx-scope': 'off',
     'import/extensions': 'off',
-    'linebreak-style': ['error', 'windows'],
-    "@typescript-eslint/semi": ["error", "always"]
+    'linebreak-style': ['error', 'unix'],
+    '@typescript-eslint/semi': ['error', 'always'],
   },
 };
