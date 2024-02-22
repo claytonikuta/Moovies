@@ -16,14 +16,14 @@ colorMap.set('Top Rated', 'red');
 colorMap.set('Now Playing', 'blue');
 colorMap.set('Upcoming', 'violet');
 
-const toggleFavorite = async (movieId) => {
-  try {
-    await axios.post(`/api/favourites/${movieId}`);
-    // Update UI to reflect favorite status – for demonstration it requires additional implementation details
-  } catch (error) {
-    console.error('An error occurred while updating favorites.', error);
-  }
-};
+// const toggleFavorite = async (movieId) => {
+//   try {
+//     await axios.post(`/api/favourites/${movieId}`);
+//     // Update UI to reflect favorite status – for demonstration it requires additional implementation details
+//   } catch (error) {
+//     console.error('An error occurred while updating favorites.', error);
+//   }
+// };
 
 export default function MoviesList() {
   interface Movie {
@@ -96,7 +96,7 @@ export default function MoviesList() {
                   <Menu.Dropdown style={{ backgroundColor: 'rgba(0, 0, 0, 0.9)' }}>
                     <Menu.Item
                       leftSection={<IconHeart style={{ width: rem(14), height: rem(14) }} />}
-                      onClick={() => toggleFavorite(movie.id)}
+                      // onClick={() => toggleFavorite(movie.id)}
                     >
                         Add to Favourites
                     </Menu.Item>
