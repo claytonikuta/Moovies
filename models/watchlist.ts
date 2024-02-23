@@ -7,18 +7,17 @@ export interface WatchListDocument extends Document {
   movieId: number;
 }
 
-const WatchListSchema = new Schema(
-  {
-    user: {
-      type: Schema.Types.ObjectId,
-      ref: 'User',
-      required: true,
-    },
-    movieId: {
-      type: Number,
-      required: true,
-    },
-  }
-);
+const WatchListSchema = new Schema({
+  user: {
+    type: Schema.Types.ObjectId,
+    ref: 'User',
+    required: true,
+  },
+  movieId: {
+    type: Number,
+    required: true,
+  },
+});
 
-export const WatchList = mongoose.models.WatchList || mongoose.model<WatchListDocument>('WatchLater', WatchListSchema);
+export const WatchList =
+  mongoose.models.WatchList || mongoose.model<WatchListDocument>('WatchList', WatchListSchema);

@@ -5,13 +5,11 @@ import Link from 'next/link';
 import { Menu, Button, rem } from '@mantine/core';
 import { IconChecks, IconClockPlus, IconPlaylistAdd, IconHeart } from '@tabler/icons-react';
 import useMovieLists from '../../hooks/useMovieLists';
-import styles from './FavouritesList.module.css';
-// import { watch } from 'fs';
+import styles from './WatchedList.module.css';
 
-const FavouritesList = () => {
+const WatchedList = () => {
   const {
-    // favourites,
-    watched,
+    favourites,
     watchlist,
     addToFavourites,
     removeFromFavourites,
@@ -30,26 +28,26 @@ const FavouritesList = () => {
   }
   const isInList = (movieId: number, list: number[]) => list.includes(movieId);
 
-  const [favourites, setFavourites] = useState<Movie[]>([]);
-  const favouritesIds = favourites.map((movie) => movie.id); // Create an array of IDs from favourites
+  const [watched, setWatched] = useState<Movie[]>([]);
+  const watchedIds = watched.map((movie) => movie.id);
 
   useEffect(() => {
-    const fetchFavourites = async () => {
+    const fetchWatched = async () => {
       try {
-        const response = await axios.get('/api/favourites');
-        setFavourites(response.data);
+        const response = await axios.get('/api/watched');
+        setWatched(response.data);
       } catch (error) {
-        console.error('An error occurred while fetching favourites:', error);
+        console.error('An error occurred while fetching watched:', error);
       }
     };
 
-    fetchFavourites();
+    fetchWatched();
   }, []);
 
   return (
     <div className={styles.moviesList}>
-      {favourites.length > 0 ? (
-        favourites.map((movie) => (
+      {watched.length > 0 ? (
+        watched.map((movie) => (
           <div key={movie.id} className={styles.movieCard}>
             <h2>{movie.title}</h2>
             <div className={styles.posterWrapper}>
@@ -80,14 +78,14 @@ const FavouritesList = () => {
                     <Menu.Item
                       leftSection={<IconHeart style={{ width: rem(14), height: rem(14) }} />}
                       onClick={() => {
-                        if (isInList(movie.id, favouritesIds)) {
+                        if (isInList(movie.id, favourites)) {
                           removeFromFavourites(movie.id);
                         } else {
                           addToFavourites(movie.id);
                         }
                       }}
                     >
-                      {isInList(movie.id, favouritesIds)
+                      {isInList(movie.id, favourites)
                         ? 'Remove from Favourites'
                         : 'Add to Favourites'}
                     </Menu.Item>
@@ -112,7 +110,7 @@ const FavouritesList = () => {
                       onClick={() => {
                         const currentMovieId = movie.id; // Properly reference the id of the movie here
 
-                        if (isInList(currentMovieId, watched)) {
+                        if (isInList(currentMovieId, watchedIds)) {
                           // Movie is already in favourites, so run code to remove it
                           removeFromWatched(currentMovieId);
                         } else {
@@ -121,7 +119,7 @@ const FavouritesList = () => {
                         }
                       }}
                     >
-                      {isInList(movie.id, watched) ? 'Remove from Watched' : 'Add to Watched'}
+                      {isInList(movie.id, watchedIds) ? 'Remove from Watched' : 'Add to Watched'}
                     </Menu.Item>
                   </Menu.Dropdown>
                 </Menu>
@@ -130,10 +128,10 @@ const FavouritesList = () => {
           </div>
         ))
       ) : (
-        <p>No movies in favourites yet...</p>
+        <p>No movies in watched yet...</p>
       )}
     </div>
   );
 };
 
-export default FavouritesList;
+export default WatchedList;

@@ -21,5 +21,6 @@ module.exports = {
     'no-var': 'off',
     'import/no-mutable-exports': 'off',
     'arrow-body-style': 'off',
+    'object-shorthand': 'off',
   },
 };

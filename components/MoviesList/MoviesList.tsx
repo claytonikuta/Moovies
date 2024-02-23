@@ -1,8 +1,11 @@
-// components/MoivesList/MoviesList.tsx
+// components/MoviesList/MoviesList.tsx
 import { useEffect, useState } from 'react';
-import { SegmentedControl, Menu, Button, rem } from '@mantine/core';
+import { SegmentedControl, Menu, Button, rem, ButtonProps } from '@mantine/core';
 import axios from 'axios';
+import Link from 'next/link';
 import { IconChecks, IconClockPlus, IconPlaylistAdd, IconHeart } from '@tabler/icons-react';
+import { signIn, useSession } from 'next-auth/react';
+import GoogleIcon from './GoogleIcon'; // Update the import statement
 import useMovieLists from '../../hooks/useMovieLists';
 import styles from './MoviesList.module.css';
 
@@ -13,8 +16,23 @@ colorMap.set('Top Rated', 'red');
 colorMap.set('Now Playing', 'blue');
 colorMap.set('Upcoming', 'violet');
 
+export function GoogleButton(props: ButtonProps & React.ComponentPropsWithoutRef<'button'>) {
+  return <Button leftSection={<GoogleIcon />} variant="default" {...props} />;
+}
+
 export default function MoviesList() {
-  const { favorites, watchlist, watched, loadData } = useMovieLists();
+  const {
+    favourites,
+    watched,
+    watchlist,
+    loadData,
+    addToFavourites,
+    removeFromFavourites,
+    addToWatchList,
+    removeFromWatchList,
+    addToWatched,
+    removeFromWatched,
+  } = useMovieLists();
 
   const isInList = (movieId: number, list: number[]) => list.includes(movieId);
 
@@ -30,6 +48,7 @@ export default function MoviesList() {
   const [movies, setMovies] = useState<Movie[]>([]);
   const [selected, setSelected] = useState('Popular');
   const [expandedMovieId, setExpandedMovieId] = useState<number | null>(null);
+  const { status } = useSession();
 
   useEffect(() => {
     axios
@@ -40,7 +59,8 @@ export default function MoviesList() {
       .catch((error) => {
         console.error('An error occurred while fetching data from the MovieDB API', error);
       });
-  }, []);
+    loadData();
+  }, [loadData]);
 
   const handleSelected = (value: string) => {
     setSelected(value);
@@ -62,58 +82,6 @@ export default function MoviesList() {
     }
   };
 
-  // const toggleFavorite = async (movieId: number) => {
-  //   try {
-  //     await axios.post(`/api/favourites/${movieId}`);
-  //     loadData();
-  //   } catch (error) {
-  //     console.error('An error occurred while updating favorites.', error);
-  //   }
-  // };
-
-  const addToFavourites = async (movieId: number) => {
-    try {
-      const response = await axios.post('/api/favourites/add', { movieId });
-      // Assuming your POST endpoint returns the updated list or a success confirmation
-      if (response.status === 200) {
-        loadData();
-      }
-    } catch (error) {
-      console.error('Error adding to favourites:', error);
-      // Handle error, maybe inform the user
-    }
-  };
-
-  const removeFromFavourites = async (movieId: number) => {
-    try {
-      const response = await axios.delete(`/api/favourites/${movieId}`);
-      if (response.status === 204) {
-        loadData();
-      }
-    } catch (error) {
-      console.error('Error removing from favorites:', error);
-      // Handle error, maybe inform the user
-    }
-  };
-
-  const toggleWatched = async (movieId: number) => {
-    try {
-      await axios.post(`/api/watched/${movieId}`);
-      loadData();
-    } catch (error) {
-      console.error('An error occurred while updating watched.', error);
-    }
-  };
-
-  const toggleWatchList = async (movieId: number) => {
-    try {
-      await axios.post(`/api/watchlist/${movieId}`);
-      loadData();
-    } catch (error) {
-      console.error('An error occurred while updating watchlist.', error);
-    }
-  };
-
   return (
     <div className={styles.moviesMain}>
       <div className={styles.moviesSegment}>
@@ -129,14 +97,22 @@ export default function MoviesList() {
           <div key={movie.id} className={styles.movieCard}>
             <h2>{movie.title}</h2>
             <div className={styles.posterWrapper}>
-              {movie.poster_path ? (
-                <img
-                  src={`https://image.tmdb.org/t/p/w500${movie.poster_path}`}
-                  alt={movie.title}
-                />
-              ) : (
-                <img src="path/to/your/placeholder/image.jpg" alt="placeholder" />
-              )}
+              <Link href={`/movie/${movie.id}`} passHref>
+                {' '}
+                {/* Add Link component here */}
+                <a>
+                  {' '}
+                  {/* Add an anchor tag to make the whole image clickable */}
+                  {movie.poster_path ? (
+                    <img
+                      src={`https://image.tmdb.org/t/p/w500${movie.poster_path}`}
+                      alt={movie.title}
+                    />
+                  ) : (
+                    <img src="path/to/your/placeholder/image.jpg" alt="placeholder" />
+                  )}
+                </a>
+              </Link>
               <div className={styles.menuWrapper}>
                 <Menu position="bottom-end" shadow="md" width={200}>
                   <Menu.Target>
@@ -145,34 +121,75 @@ export default function MoviesList() {
                     </Button>
                   </Menu.Target>
                   <Menu.Dropdown style={{ backgroundColor: 'rgba(0, 0, 0, 0.9)' }}>
-                    <Menu.Item
-                      leftSection={<IconHeart style={{ width: rem(14), height: rem(14) }} />}
-                      onClick={() => {
-                        const currentMovieId = movie.id; // Properly reference the id of the movie here
+                    {status === 'authenticated' ? (
+                      <>
+                        <Menu.Item
+                          leftSection={<IconHeart style={{ width: rem(14), height: rem(14) }} />}
+                          onClick={() => {
+                            const currentMovieId = movie.id; // Properly reference the id of the movie here
 
-                        if (isInList(currentMovieId, favorites)) {
-                          // Movie is already in favorites, so run code to remove it
-                          removeFromFavourites(currentMovieId);
-                        } else {
-                          // Movie is not in favorites, so run code to add it
-                          addToFavourites(currentMovieId);
-                        }
-                      }}
-                    >
-                      {isInList(movie.id, favorites) ? 'Remove from Favorites' : 'Add to Favorites'}
-                    </Menu.Item>
-                    <Menu.Item
-                      leftSection={<IconClockPlus style={{ width: rem(14), height: rem(14) }} />}
-                      onClick={() => toggleWatchList(movie.id)}
-                    >
-                      {isInList(movie.id, watchlist) ? 'Remove from Watchlist' : 'Add to Watchlist'}
-                    </Menu.Item>
-                    <Menu.Item
-                      leftSection={<IconChecks style={{ width: rem(14), height: rem(14) }} />}
-                      onClick={() => toggleWatched(movie.id)}
-                    >
-                      {isInList(movie.id, watched) ? 'Remove from Watched' : 'Add to Watched'}
-                    </Menu.Item>
+                            if (isInList(currentMovieId, favourites)) {
+                              // Movie is already in favourites, so run code to remove it
+                              removeFromFavourites(currentMovieId);
+                            } else {
+                              // Movie is not in favourites, so run code to add it
+                              addToFavourites(currentMovieId);
+                            }
+                          }}
+                        >
+                          {isInList(movie.id, favourites)
+                            ? 'Remove from Favourites'
+                            : 'Add to Favourites'}
+                        </Menu.Item>
+                        <Menu.Item
+                          leftSection={
+                            <IconClockPlus style={{ width: rem(14), height: rem(14) }} />
+                          }
+                          onClick={() => {
+                            const currentMovieId = movie.id; // Properly reference the id of the movie here
+
+                            if (isInList(currentMovieId, watchlist)) {
+                              // Movie is already in favourites, so run code to remove it
+                              removeFromWatchList(currentMovieId);
+                            } else {
+                              // Movie is not in favourites, so run code to add it
+                              addToWatchList(currentMovieId);
+                            }
+                          }}
+                        >
+                          {isInList(movie.id, watchlist)
+                            ? 'Remove from Watchlist'
+                            : 'Add to Watchlist'}
+                        </Menu.Item>
+                        <Menu.Item
+                          leftSection={<IconChecks style={{ width: rem(14), height: rem(14) }} />}
+                          onClick={() => {
+                            const currentMovieId = movie.id; // Properly reference the id of the movie here
+
+                            if (isInList(currentMovieId, watched)) {
+                              // Movie is already in favourites, so run code to remove it
+                              removeFromWatched(currentMovieId);
+                            } else {
+                              // Movie is not in favourites, so run code to add it
+                              addToWatched(currentMovieId);
+                            }
+                          }}
+                        >
+                          {isInList(movie.id, watched) ? 'Remove from Watched' : 'Add to Watched'}
+                        </Menu.Item>
+                      </>
+                    ) : (
+                      <Menu.Item>
+                        <GoogleButton
+                          style={{ marginRight: '20px' }}
+                          onClick={() => {
+                            signIn('google', { callbackUrl: window.location.origin });
+                          }}
+                        >
+                          Sign In / Register
+                        </GoogleButton>
+                      </Menu.Item>
+                    )}
                   </Menu.Dropdown>
                 </Menu>
               </div>
