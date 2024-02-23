@@ -2,7 +2,7 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import axios from 'axios';
 
-const API_KEY = 'b137b0ed3bd802c92e40d0c241b6751c';
+const API_KEY = process.env.MOVIEDB_API_KEY;
 
 type MovieData = {
   id: number;
