@@ -20,5 +20,7 @@ module.exports = {
     'vars-on-top': 'off',
     'no-var': 'off',
     'import/no-mutable-exports': 'off',
+    'arrow-body-style': 'off',
+    'object-shorthand': 'off',
   },
 };

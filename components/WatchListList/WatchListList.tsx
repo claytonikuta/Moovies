@@ -1,18 +1,16 @@
-// components/FavouritesList/FavouritesList.tsx
+// components/WatchListList/WatchListList.tsx
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import Link from 'next/link';
 import { Menu, Button, rem } from '@mantine/core';
 import { IconChecks, IconClockPlus, IconPlaylistAdd, IconHeart } from '@tabler/icons-react';
 import useMovieLists from '../../hooks/useMovieLists';
-import styles from './FavouritesList.module.css';
-// import { watch } from 'fs';
+import styles from './WatchListList.module.css';
 
-const FavouritesList = () => {
+const WatchListList = () => {
   const {
-    // favourites,
+    favourites,
     watched,
-    watchlist,
     addToFavourites,
     removeFromFavourites,
     addToWatchList,
@@ -30,26 +28,26 @@ const FavouritesList = () => {
   }
   const isInList = (movieId: number, list: number[]) => list.includes(movieId);
 
-  const [favourites, setFavourites] = useState<Movie[]>([]);
-  const favouritesIds = favourites.map((movie) => movie.id); // Create an array of IDs from favourites
+  const [watchList, setWatchList] = useState<Movie[]>([]);
+  const watchListIds = watchList.map((movie) => movie.id);
 
   useEffect(() => {
-    const fetchFavourites = async () => {
+    const fetchWatchList = async () => {
       try {
-        const response = await axios.get('/api/favourites');
-        setFavourites(response.data);
+        const response = await axios.get('/api/watchlist');
+        setWatchList(response.data);
       } catch (error) {
-        console.error('An error occurred while fetching favourites:', error);
+        console.error('An error occurred while fetching watchlist:', error);
       }
     };
 
-    fetchFavourites();
+    fetchWatchList();
   }, []);
 
   return (
     <div className={styles.moviesList}>
-      {favourites.length > 0 ? (
-        favourites.map((movie) => (
+      {watchList.length > 0 ? (
+        watchList.map((movie) => (
           <div key={movie.id} className={styles.movieCard}>
             <h2>{movie.title}</h2>
             <div className={styles.posterWrapper}>
@@ -80,14 +78,14 @@ const FavouritesList = () => {
                     <Menu.Item
                       leftSection={<IconHeart style={{ width: rem(14), height: rem(14) }} />}
                       onClick={() => {
-                        if (isInList(movie.id, favouritesIds)) {
+                        if (isInList(movie.id, favourites)) {
                           removeFromFavourites(movie.id);
                         } else {
                           addToFavourites(movie.id);
                         }
                       }}
                     >
-                      {isInList(movie.id, favouritesIds)
+                      {isInList(movie.id, favourites)
                         ? 'Remove from Favourites'
                         : 'Add to Favourites'}
                     </Menu.Item>
@@ -96,7 +94,7 @@ const FavouritesList = () => {
                       onClick={() => {
                         const currentMovieId = movie.id; // Properly reference the id of the movie here
 
-                        if (isInList(currentMovieId, watchlist)) {
+                        if (isInList(currentMovieId, watchListIds)) {
                           // Movie is already in favourites, so run code to remove it
                           removeFromWatchList(currentMovieId);
                         } else {
@@ -105,7 +103,9 @@ const FavouritesList = () => {
                         }
                       }}
                     >
-                      {isInList(movie.id, watchlist) ? 'Remove from Watchlist' : 'Add to Watchlist'}
+                      {isInList(movie.id, watchListIds)
+                        ? 'Remove from Watchlist'
+                        : 'Add to Watchlist'}
                     </Menu.Item>
                     <Menu.Item
                       leftSection={<IconChecks style={{ width: rem(14), height: rem(14) }} />}
@@ -130,10 +130,10 @@ const FavouritesList = () => {
           </div>
         ))
       ) : (
-        <p>No movies in favourites yet...</p>
+        <p>No movies in watchlist yet...</p>
       )}
     </div>
   );
 };
 
-export default FavouritesList;
+export default WatchListList;

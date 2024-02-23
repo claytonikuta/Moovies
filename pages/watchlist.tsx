@@ -1,9 +1,11 @@
 // pages/favourite.tsx
 
+import WatchListList from '../components/WatchListList/WatchListList';
+
 export default function Home() {
   return (
     <div>
-      Watch List
+      <WatchListList />
     </div>
   );
 }
