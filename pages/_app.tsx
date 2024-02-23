@@ -11,7 +11,7 @@ export default function App({ Component, pageProps }: AppProps) {
     // <MantineProvider theme={theme}>
     <MantineProvider defaultColorScheme="dark">
       <Head>
-        <title>P01 - Movie App</title>
+        <title>Moovies</title>
         <meta
           name="viewport"
           content="minimum-scale=1, initial-scale=1, width=device-width, user-scalable=no"
