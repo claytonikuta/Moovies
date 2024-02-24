@@ -69,3 +69,15 @@
   border: none;
   border-radius: 4px;
 }
+
+@media (max-width: 1024px) {
+  .poster {
+    max-width: 65%;
+  }
+}
+
+@media (max-width: 768px) {
+  .poster {
+    max-width: 80%;
+  }
+}
