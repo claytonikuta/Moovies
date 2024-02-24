@@ -1,0 +1,71 @@
+.container {
+  font-family: 'Arial', sans-serif;
+  max-width: 75%;
+  margin: 40px auto;
+  padding: 5px 20px 20px 20px;
+  background-color: #333;
+  border-radius: 8px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.title {
+  text-align: center;
+  font-size: 2.5rem;
+  margin-bottom: 20px;
+  color: rgb(193, 194, 197);
+}
+
+.poster {
+  max-width: 50%;
+  border-radius: 4px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.overview {
+  margin-bottom: 20px;
+  line-height: 1.6;
+}
+
+.genres {
+  margin-bottom: 10px;
+}
+
+.genre {
+  display: inline-block;
+  margin-right: 10px;
+  padding: 5px 10px;
+  background-color: #007bff;
+  color: #fff;
+  border-radius: 20px;
+  font-size: 0.85rem;
+}
+
+.rating,
+.releaseDate {
+  font-weight: bold;
+  margin-bottom: 10px;
+}
+
+.carouselContainer {
+  margin-top: 20px;
+}
+
+.iframeContainer {
+  position: relative;
+  width: 100%;
+  padding-top: 56.25%;
+  margin-bottom: 30px;
+}
+
+.iframeContainer iframe {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border: none;
+  border-radius: 4px;
+}

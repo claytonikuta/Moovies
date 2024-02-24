@@ -5,7 +5,7 @@ import { getSession } from 'next-auth/react';
 import { Favourite } from '../../../models/favourites';
 import mongooseConnector from '../../../lib/db/mongooseConnect';
 
-const API_KEY = process.env.MOVIEDB_API_KEY;
+const API_KEY = process.env.NEXT_PUBLIC_MOVIEDB_API_KEY;
 
 const fetchMovieDetails = async (movieId: string) => {
   try {
@@ -17,7 +17,6 @@ const fetchMovieDetails = async (movieId: string) => {
     return response.data;
   } catch (error) {
     console.error(`Failed to fetch movie details for ID: ${movieId}`, error);
-    // You might want to handle errors differently here
     return null;
   }
 };

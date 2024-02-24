@@ -3,6 +3,9 @@ import { useState, useEffect } from 'react';
 import axios from 'axios';
 import Carousel from 'react-multi-carousel';
 import 'react-multi-carousel/lib/styles.css';
+import styles from './movie.module.css';
+
+const API_KEY = process.env.NEXT_PUBLIC_MOVIEDB_API_KEY;
 
 interface Movie {
   id: number;
@@ -35,12 +38,12 @@ export default function Movie() {
       const [movieResponse, trailersResponse] = await Promise.all([
         axios.get(`https://api.themoviedb.org/3/movie/${movieId}`, {
           params: {
-            api_key: 'b137b0ed3bd802c92e40d0c241b6751c',
+            api_key: API_KEY,
           },
         }),
         axios.get(`https://api.themoviedb.org/3/movie/${movieId}/videos`, {
           params: {
-            api_key: 'b137b0ed3bd802c92e40d0c241b6751c',
+            api_key: API_KEY,
           },
         }),
       ]);
@@ -64,82 +67,88 @@ export default function Movie() {
   }
 
   return (
-    <div>
-      <h1>{movie.title}</h1>
+    <div className={styles.container}>
+      <h1 className={styles.title}>{movie.title}</h1>
       {movie.poster_path && (
-        <img src={`https://image.tmdb.org/t/p/w500${movie.poster_path}`} alt={movie.title} />
+        <img
+          className={styles.poster}
+          src={`https://image.tmdb.org/t/p/w1280${movie.poster_path}`}
+          alt={movie.title}
+        />
       )}
-      <p>{movie.overview}</p>
-      <div>
-        <strong>Genres:</strong>
+      <p className={styles.overview}>{movie.overview}</p>
+      <div className={styles.genres}>
+        <strong>Genres: </strong>
         {genres.map((genre) => (
-          <span key={genre.id}>{genre.name}</span>
+          <span key={genre.id} className={styles.genre}>
+            {genre.name}
+          </span>
         ))}
       </div>
-      <p>
-        <strong>Rating:</strong> {movie.vote_average}
+      <p className={styles.rating}>
+        <strong>Rating:</strong> {Math.round(movie.vote_average * 10)}%
       </p>
-      <p>
+      <p className={styles.releaseDate}>
         <strong>Release Date:</strong> {movie.release_date}
       </p>
-      {/* Add other movie details here */}
-      <Carousel
-        additionalTransfrom={0}
-        arrows
-        autoPlaySpeed={3000}
-        centerMode={false}
-        className=""
-        containerClass="container-with-dots"
-        draggable
-        focusOnSelect={false}
-        infinite
-        keyBoardControl
-        minimumTouchDrag={80}
-        renderButtonGroupOutside={false}
-        renderDotsOutside
-        responsive={{
-          desktop: {
-            breakpoint: {
-              max: 3000,
-              min: 1024,
+      <div className={styles.carouselContainer}>
+        <Carousel
+          additionalTransfrom={0}
+          arrows
+          autoPlaySpeed={3000}
+          centerMode={false}
+          className=""
+          containerClass="container-with-dots"
+          draggable
+          focusOnSelect={false}
+          infinite
+          keyBoardControl
+          minimumTouchDrag={80}
+          renderButtonGroupOutside={false}
+          renderDotsOutside
+          responsive={{
+            desktop: {
+              breakpoint: {
+                max: 3000,
+                min: 1024,
+              },
+              items: 3,
+              partialVisibilityGutter: 40,
             },
-            items: 3,
-            partialVisibilityGutter: 40,
-          },
-          mobile: {
-            breakpoint: {
-              max: 464,
-              min: 0,
+            mobile: {
+              breakpoint: {
+                max: 464,
+                min: 0,
+              },
+              items: 1,
+              partialVisibilityGutter: 30,
             },
-            items: 1,
-            partialVisibilityGutter: 30,
-          },
-          tablet: {
-            breakpoint: {
-              max: 1024,
-              min: 464,
+            tablet: {
+              breakpoint: {
+                max: 1024,
+                min: 464,
+              },
+              items: 2,
+              partialVisibilityGutter: 30,
             },
-            items: 2,
-            partialVisibilityGutter: 30,
-          },
-        }}
-        showDots
-        sliderClass=""
-        slidesToSlide={1}
-        swipeable
-      >
-        {trailers.map((trailer) => (
-          <iframe
-            key={trailer.id}
-            title={movie.title}
-            width="560"
-            height="315"
-            src={`https://www.youtube.com/embed/${trailer.key}`}
-            frameBorder="0"
-            allowFullScreen
-          />
-        ))}
-      </Carousel>
+          }}
+          sliderClass=""
+          slidesToSlide={1}
+          swipeable
+        >
+          {trailers.map((trailer) => (
+            <div className={styles.iframeContainer}>
+              <iframe
+                key={trailer.id}
+                title={movie.title}
+                src={`https://www.youtube.com/embed/${trailer.key}`}
+                frameBorder="0"
+                allowFullScreen
+              />
+            </div>
+          ))}
+        </Carousel>
+      </div>
     </div>
   );
 }
