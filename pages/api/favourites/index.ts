@@ -26,7 +26,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
   const session = await getSession({ req });
 
-  // Check if user is logged in
   if (!session || !session.user) {
     res.status(401).json({ error: 'You must be signed in to access this endpoint.' });
     return;
@@ -37,11 +36,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       const userId = session.user.id;
       const favourites = await Favourite.find({ user: userId });
 
-      // Fetch the movie details for each favourite
       const movieDetailsPromises = favourites.map((fav) => fetchMovieDetails(fav.movieId));
       const movieDetails = await Promise.all(movieDetailsPromises);
 
-      // Filter out any null responses (in case of failed requests)
       const validMovieDetails = movieDetails.filter(Boolean);
 
       res.status(200).json(validMovieDetails);

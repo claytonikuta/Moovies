@@ -8,7 +8,7 @@ const MoviesPage = () => {
 
   useEffect(() => {
     loadData();
-  }, [loadData]); // Ensure loadData is listed as a dependency
+  }, [loadData]);
 
   return (
     <div>

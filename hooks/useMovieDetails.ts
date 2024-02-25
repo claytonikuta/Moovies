@@ -54,7 +54,6 @@ export const useMovieDetails = (movieId: string | string[] | undefined) => {
         setGenres(movieResponse.data.genres);
       } catch (error) {
         console.error('An error occurred while fetching movie details', error);
-        // Optionally set an error state here to display an error message
       } finally {
         setLoading(false);
       }

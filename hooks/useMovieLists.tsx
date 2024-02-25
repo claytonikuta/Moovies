@@ -8,7 +8,6 @@ export default function useMovieLists() {
   const [watchlist, setWatchlist] = useState<number[]>([]);
   const [watched, setWatched] = useState<number[]>([]);
 
-  // Wrap loadData in useCallback to memorize it between renders
   const loadData = useCallback(async () => {
     try {
       const [favouritesResponse, watchlistResponse, watchedResponse] = await Promise.all([
@@ -33,7 +32,6 @@ export default function useMovieLists() {
       }
     } catch (error) {
       console.error('Error adding to favourites:', error);
-      // Handle error, maybe inform the user
     }
   };
 
@@ -45,7 +43,6 @@ export default function useMovieLists() {
       }
     } catch (error) {
       console.error('Error removing from favourites:', error);
-      // Handle error, maybe inform the user
     }
   };
 
@@ -93,7 +90,6 @@ export default function useMovieLists() {
     }
   };
 
-  // Call loadData on mount and any time loadData dependency updates
   useEffect(() => {
     loadData();
   }, [loadData]);

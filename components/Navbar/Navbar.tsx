@@ -1,22 +1,11 @@
 // components/Navbar.tsx
 import Link from 'next/link';
 import { useState } from 'react';
-import {
-  // Autocomplete,
-  Group,
-  // rem,
-  Button,
-  Popover,
-  ButtonProps,
-  Burger,
-  Transition,
-} from '@mantine/core';
+import { Group, Button, Popover, ButtonProps, Burger, Transition } from '@mantine/core';
 import { useMediaQuery } from '@mantine/hooks';
-// import { useRouter } from 'next/router';
-// import { IconSearch } from '@tabler/icons-react';
 import { signOut, signIn, useSession } from 'next-auth/react';
 import Head from 'next/head';
-import GoogleIcon from './GoogleIcon'; // Update the import statement
+import GoogleIcon from './GoogleIcon';
 import styles from './Navbar.module.css';
 
 const alwaysVisibleLinks = [
@@ -37,19 +26,11 @@ export function GoogleButton(props: ButtonProps & React.ComponentPropsWithoutRef
 }
 
 export default function Navbar() {
-  // const router = useRouter();
   const { status } = useSession();
   const [opened, setOpened] = useState(false);
-  const isLargeScreen = useMediaQuery('(min-width: 1024px)'); // This will return true if the screen width is 1024px or larger
+  const isLargeScreen = useMediaQuery('(min-width: 1024px)');
 
   const toggleBurgerMenu = () => setOpened((o) => !o);
-
-  // const handleSearch = (value: string) => {
-  //   // Redirect to dynamic search page with query as route parameter
-  //   if (value.trim()) {
-  //     router.push(`/search/${encodeURIComponent(value.trim())}`);
-  //   }
-  // };
 
   const links =
     status === 'authenticated'
@@ -82,13 +63,13 @@ export default function Navbar() {
         {(transitionStyles) => (
           <div
             style={{
-              ...transitionStyles, // Spread the transition styles
+              ...transitionStyles,
               boxSizing: 'border-box',
               position: 'fixed',
-              top: `${HEADER_HEIGHT}px`, // Template literal correctly used
-              right: '10px', // Slightly off the right edge of the page
-              width: 'calc(100% - 20px)', // Full width minus the offset on both sides
-              maxWidth: '250px', // You can enforce a maxWidth if you want
+              top: `${HEADER_HEIGHT}px`,
+              right: '10px',
+              width: 'calc(100% - 20px)',
+              maxWidth: '250px',
               background: '#333',
               zIndex: 500,
               display: 'flex',
@@ -97,29 +78,10 @@ export default function Navbar() {
               borderRadius: '5px',
               border: '0.5px solid #666',
               boxShadow: '-2px 0 8px rgba(0,0,0,0.1)',
-              maxHeight: `calc(100vh - ${HEADER_HEIGHT}px - 20px)`, // Template literal correctly used
-              overflowY: 'auto', // Makes it scrollable if content height exceeds maximum height
+              maxHeight: `calc(100vh - ${HEADER_HEIGHT}px - 20px)`,
+              overflowY: 'auto',
             }}
           >
-            {/* <Autocomplete
-              className={styles.search}
-              placeholder="Search"
-              leftSection={<IconSearch style={{ width: rem(16), height: rem(16) }} stroke={1.5} />}
-              data={['']}
-              visibleFrom="xs"
-              onChange={(value: string) => handleSearch(value)}
-              onKeyDown={(event: React.KeyboardEvent<HTMLInputElement>) => {
-                if (event.key === 'Enter') {
-                  handleSearch(event.currentTarget.value);
-                }
-              }}
-              style={{
-                width: '100%',
-                alignSelf: 'center',
-                marginRight: '0px',
-                marginBottom: '5px',
-              }}
-            /> */}
             {items.map((item) => (
               <div key={`mobile-${item.key}`}>{item}</div>
             ))}
@@ -186,19 +148,6 @@ export default function Navbar() {
             >
               {items}
             </Group>
-            {/* <Autocomplete
-              className={styles.search}
-              placeholder="Search"
-              leftSection={<IconSearch style={{ width: rem(16), height: rem(16) }} stroke={1.5} />}
-              data={['']}
-              visibleFrom="xs"
-              onChange={(value: string) => handleSearch(value)}
-              onKeyDown={(event: React.KeyboardEvent<HTMLInputElement>) => {
-                if (event.key === 'Enter') {
-                  handleSearch(event.currentTarget.value);
-                }
-              }}
-            /> */}
             {status === 'authenticated' ? (
               <Button
                 color="red"

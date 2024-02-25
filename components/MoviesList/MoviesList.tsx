@@ -79,7 +79,7 @@ export default function MoviesList() {
     fetchMovies();
 
     return () => {
-      isMounted = false; // Clean up flag on unmount
+      isMounted = false;
     };
   }, [loadData]);
 
@@ -87,9 +87,9 @@ export default function MoviesList() {
     if (value !== selected) {
       setSearchQuery('');
       setSelected(value);
-      setPage(1); // Reset to the first page
-      setHasMore(true); // Assume there are more items available
-      setIsSwitching(true); // Set the switching state to true
+      setPage(1);
+      setHasMore(true);
+      setIsSwitching(true);
 
       try {
         const response = await axios.get(`/api/movies/?listType=${value}&page=1`);
@@ -97,14 +97,13 @@ export default function MoviesList() {
       } catch (error) {
         console.error('An error occurred while fetching data from the MovieDB API', error);
       } finally {
-        setIsSwitching(false); // Set switching state to false after data is fetched
+        setIsSwitching(false);
       }
     }
   };
 
-  // Since we're using a new `handleSelected` function, update the useEffect that fetches initial data:
   useEffect(() => {
-    handleSelected(selected); // Call the function directly with the initial selected state
+    handleSelected(selected);
     loadData();
   }, []);
 
@@ -169,7 +168,7 @@ export default function MoviesList() {
         />
       </div>
       {isSwitching ? (
-        <div>Loading new category...</div> // Display a loading indicator without removing the movie cards
+        <div>Loading new category...</div>
       ) : (
         <InfiniteScroll
           dataLength={movies.length}
@@ -208,12 +207,10 @@ export default function MoviesList() {
                                 <IconHeart style={{ width: rem(14), height: rem(14) }} />
                               }
                               onClick={() => {
-                                const currentMovieId = movie.id; // Properly reference the id of the movie here
+                                const currentMovieId = movie.id;
                                 if (favourites.includes(currentMovieId)) {
-                                  // Movie is already in favourites, so run code to remove it
                                   removeFromFavourites(currentMovieId);
                                 } else {
-                                  // Movie is not in favourites, so run code to add it
                                   addToFavourites(currentMovieId);
                                 }
                               }}
@@ -227,7 +224,7 @@ export default function MoviesList() {
                                 <IconClockPlus style={{ width: rem(14), height: rem(14) }} />
                               }
                               onClick={() => {
-                                const currentMovieId = movie.id; // Properly reference the id of the movie here
+                                const currentMovieId = movie.id;
                                 if (watchlist.includes(currentMovieId)) {
                                   removeFromWatchList(currentMovieId);
                                 } else {
@@ -236,8 +233,8 @@ export default function MoviesList() {
                               }}
                             >
                               {watchlist.includes(movie.id)
-                                ? 'Remove from Watchlist'
-                                : 'Add to Watchlist'}
+                                ? 'Remove from Watch List'
+                                : 'Add to Watch List'}
                             </Menu.Item>
                             <Menu.Item
                               leftSection={

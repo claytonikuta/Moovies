@@ -14,7 +14,7 @@ export default async function handler(req, res) {
   }
 
   const userId = session.user.id;
-  const movieId = req.query.slug[0]; // Here's the updated line
+  const movieId = req.query.slug[0];
 
   if (req.method === 'POST') {
     try {

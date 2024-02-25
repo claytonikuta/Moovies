@@ -48,10 +48,9 @@ export default function Movie() {
 
   const fetchMovieDetails = async (movieId: string | string[]) => {
     try {
-      // Call the local API route
       const res = await axios.get(`/api/movie/${movieId}`);
-      const { movie: movieDetails, trailers: movieTrailers, genres: movieGenres } = res.data; // Rename "movie" to "movieDetails"
-      setMovie(movieDetails); // Update to use "movieDetails"
+      const { movie: movieDetails, trailers: movieTrailers, genres: movieGenres } = res.data;
+      setMovie(movieDetails);
       setTrailers(movieTrailers);
       setGenres(movieGenres);
     } catch (error) {

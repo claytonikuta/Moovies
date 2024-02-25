@@ -87,13 +87,11 @@ const FavouritesList = () => {
                       onClick={() => {
                         const currentMovieId = movie.id;
                         if (favourites.includes(currentMovieId)) {
-                          // Movie is already in favourites, so run code to remove it
                           removeFromFavourites(currentMovieId);
                           setFavourites((prevFavourites) =>
                             prevFavourites.filter((fav) => fav.id !== currentMovieId)
                           );
                         } else {
-                          // Movie is not in favourites, so run code to add it
                           addToFavourites(currentMovieId);
                         }
                       }}
@@ -105,27 +103,25 @@ const FavouritesList = () => {
                     <Menu.Item
                       leftSection={<IconClockPlus style={{ width: rem(14), height: rem(14) }} />}
                       onClick={() => {
-                        const currentMovieId = movie.id; // Properly reference the id of the movie here
+                        const currentMovieId = movie.id;
                         if (watchlist.includes(currentMovieId)) {
-                          // Movie is already in favourites, so run code to remove it
                           removeFromWatchList(currentMovieId);
                         } else {
-                          // Movie is not in favourites, so run code to add it
                           addToWatchList(currentMovieId);
                         }
                       }}
                     >
-                      {watchlist.includes(movie.id) ? 'Remove from Watchlist' : 'Add to Watchlist'}
+                      {watchlist.includes(movie.id)
+                        ? 'Remove from Watch List'
+                        : 'Add to Watch List'}
                     </Menu.Item>
                     <Menu.Item
                       leftSection={<IconChecks style={{ width: rem(14), height: rem(14) }} />}
                       onClick={() => {
-                        const currentMovieId = movie.id; // Properly reference the id of the movie here
+                        const currentMovieId = movie.id;
                         if (watched.includes(currentMovieId)) {
-                          // Movie is already in favourites, so run code to remove it
                           removeFromWatched(currentMovieId);
                         } else {
-                          // Movie is not in favourites, so run code to add it
                           addToWatched(currentMovieId);
                         }
                       }}

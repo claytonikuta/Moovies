@@ -108,7 +108,9 @@ const WatchedList = () => {
                         }
                       }}
                     >
-                      {watchlist.includes(movie.id) ? 'Remove from Watchlist' : 'Add to Watchlist'}
+                      {watchlist.includes(movie.id)
+                        ? 'Remove from Watch List'
+                        : 'Add to Watch List'}
                     </Menu.Item>
                     <Menu.Item
                       leftSection={<IconChecks style={{ width: rem(14), height: rem(14) }} />}

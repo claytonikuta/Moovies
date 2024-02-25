@@ -23,11 +23,11 @@ export default function handler(
 
   if (req.method === 'GET') {
     const page = parseInt(req.query.page as string, 10) || 1;
-    const listType = req.query.listType || 'Popular'; // Default to 'popular' if no listType is specified
+    const listType = req.query.listType || 'Popular';
 
     let apiUrl;
     const currentDate = new Date();
-    currentDate.setDate(currentDate.getDate() + 4); // Add 4 days to the current date
+    currentDate.setDate(currentDate.getDate() + 4);
 
     const params: Record<string, any> = {
       api_key: API_KEY,

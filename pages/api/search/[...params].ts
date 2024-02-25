@@ -4,10 +4,10 @@ import axios from 'axios';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   const apiKey = process.env.MOVIEDB_API_KEY;
-  const language = 'en-US'; // Default language for the search
-  const includeAdult = false; // Include adult content in the search or not
-  const page = 1; // Search results page
-  const query = req.query.query as string; // Getting the search query
+  const language = 'en-US';
+  const includeAdult = false;
+  const page = 1;
+  const query = req.query.query as string;
 
   if (!query) {
     return res.status(400).json({ message: 'Query term is required' });
