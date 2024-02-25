@@ -19,6 +19,8 @@ export default function handler(
   req: NextApiRequest,
   res: NextApiResponse<MovieData[] | { error: string }>
 ) {
+  const searchQuery = req.query.search as string | undefined;
+
   if (req.method === 'GET') {
     const page = parseInt(req.query.page as string, 10) || 1;
     const listType = req.query.listType || 'Popular'; // Default to 'popular' if no listType is specified
@@ -31,34 +33,38 @@ export default function handler(
       api_key: API_KEY,
       page: 1,
     };
-
-    switch (listType) {
-      case 'Popular':
-        apiUrl = 'https://api.themoviedb.org/3/movie/popular';
-        params['region'] = 'US';
-        params['language'] = 'en-US';
-        params['sort_by'] = 'popularity.desc';
-        break;
-      case 'Top Rated':
-        apiUrl = 'https://api.themoviedb.org/3/movie/top_rated';
-        params['region'] = 'US';
-        params['language'] = 'en-US';
-        params['sort_by'] = 'popularity.desc';
-        break;
-      case 'Upcoming':
-        apiUrl = 'https://api.themoviedb.org/3/movie/upcoming';
-        params['region'] = 'US';
-        params['language'] = 'en-US';
-        params['sort_by'] = 'popularity.desc';
-        break;
-      case 'Now Playing':
-        apiUrl = 'https://api.themoviedb.org/3/movie/now_playing';
-        params['region'] = 'US';
-        params['language'] = 'en-US';
-        params['sort_by'] = 'popularity.desc';
-        break;
-      default:
-        apiUrl = 'https://api.themoviedb.org/3/movie/popular';
+    if (searchQuery) {
+      apiUrl = 'https://api.themoviedb.org/3/search/movie';
+      params['query'] = searchQuery;
+    } else {
+      switch (listType) {
+        case 'Popular':
+          apiUrl = 'https://api.themoviedb.org/3/movie/popular';
+          params['region'] = 'US';
+          params['language'] = 'en-US';
+          params['sort_by'] = 'popularity.desc';
+          break;
+        case 'Top Rated':
+          apiUrl = 'https://api.themoviedb.org/3/movie/top_rated';
+          params['region'] = 'US';
+          params['language'] = 'en-US';
+          params['sort_by'] = 'popularity.desc';
+          break;
+        case 'Upcoming':
+          apiUrl = 'https://api.themoviedb.org/3/movie/upcoming';
+          params['region'] = 'US';
+          params['language'] = 'en-US';
+          params['sort_by'] = 'popularity.desc';
+          break;
+        case 'Now Playing':
+          apiUrl = 'https://api.themoviedb.org/3/movie/now_playing';
+          params['region'] = 'US';
+          params['language'] = 'en-US';
+          params['sort_by'] = 'popularity.desc';
+          break;
+        default:
+          apiUrl = 'https://api.themoviedb.org/3/movie/popular';
+      }
     }
     params['page'] = page;
 
