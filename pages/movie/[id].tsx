@@ -72,12 +72,14 @@ export default function Movie() {
   return (
     <div className={styles.container}>
       <h1 className={styles.title}>{movie.title}</h1>
-      {movie.poster_path && (
+      {movie.poster_path ? (
         <img
           className={styles.poster}
           src={`https://image.tmdb.org/t/p/w1280${movie.poster_path}`}
           alt={movie.title}
         />
+      ) : (
+        <img className={styles.poster} src="/PlaceHolderLarge.jpg" alt="placeholder" />
       )}
       <div>
         {status === 'authenticated' && (
