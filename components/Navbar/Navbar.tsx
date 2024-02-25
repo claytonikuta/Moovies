@@ -43,6 +43,7 @@ export default function Navbar() {
       href={link.link}
       key={link.label}
       className={styles.link}
+      onClick={() => setOpened(false)}
     >
       {link.label}
     </Link>
