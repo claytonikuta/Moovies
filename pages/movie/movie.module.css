@@ -101,10 +101,19 @@
   .poster {
     max-width: 65%;
   }
+
+  .pillButton {
+    padding: 5px 15px;
+    font-size: 0.7rem;
+  }
 }
 
 @media (max-width: 768px) {
   .poster {
     max-width: 80%;
+  }
+  .pillButton {
+    padding: 5px 10px;
+    font-size: 0.6rem;
   }
 }
