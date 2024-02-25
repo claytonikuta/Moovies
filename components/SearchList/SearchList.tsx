@@ -1,20 +1,14 @@
-// components/MoviesList/MoviesList.tsx
-import { useEffect, useState } from 'react';
-import { SegmentedControl, Menu, Button, rem, ButtonProps } from '@mantine/core';
+// components/SearchList/SearchList.tsx
+import { useEffect, useState, useContext } from 'react';
+import { Menu, Button, rem, ButtonProps } from '@mantine/core';
 import axios from 'axios';
 import Link from 'next/link';
 import { IconChecks, IconClockPlus, IconPlaylistAdd, IconHeart } from '@tabler/icons-react';
 import { signIn, useSession } from 'next-auth/react';
 import GoogleIcon from './GoogleIcon';
 import useMovieLists from '../../hooks/useMovieLists';
-import styles from './MoviesList.module.css';
-
-const colorMap = new Map();
-
-colorMap.set('Popular', 'grey');
-colorMap.set('Top Rated', 'red');
-colorMap.set('Now Playing', 'blue');
-colorMap.set('Upcoming', 'violet');
+import { SearchContext } from '../../context/SearchContext';
+import styles from './SearchList.module.css';
 
 export function GoogleButton(props: ButtonProps & React.ComponentPropsWithoutRef<'button'>) {
   return <Button leftSection={<GoogleIcon />} variant="default" {...props} />;
@@ -34,6 +28,11 @@ export default function MoviesList() {
     removeFromWatched,
   } = useMovieLists();
   const [isLoading, setIsLoading] = useState(true);
+  const { query } = useContext(SearchContext);
+
+  const isInList = (movieId: number, list: number[]) => {
+    return list.includes(movieId);
+  };
 
   interface Movie {
     id: number;
@@ -45,17 +44,15 @@ export default function MoviesList() {
   }
 
   const [movies, setMovies] = useState<Movie[]>([]);
-  const [selected, setSelected] = useState('Popular');
-  const [expandedMovieId, setExpandedMovieId] = useState<number | null>(null);
   const { status } = useSession();
 
   useEffect(() => {
-    let isMounted = true; // Flag to prevent state update if unmounted
+    let isMounted = true;
 
     const fetchMovies = async () => {
       setIsLoading(true);
       try {
-        const response = await axios.get('/api/movies');
+        const response = await axios.get(`/api/search?query=${encodeURIComponent(query)}`);
         if (isMounted) {
           setMovies(response.data);
         }
@@ -74,40 +71,12 @@ export default function MoviesList() {
     return () => {
       isMounted = false; // Clean up flag on unmount
     };
-  }, [loadData]);
-
-  const handleSelected = (value: string) => {
-    setSelected(value);
-    axios
-      .get(`/api/movies/?listType=${value}`)
-      .then((response) => {
-        setMovies(response.data);
-      })
-      .catch((error) => {
-        console.error('An error occurred while fetching data from the MovieDB API', error);
-      });
-  };
-
-  const handleMoreInfo = (id: number) => {
-    if (expandedMovieId === id) {
-      setExpandedMovieId(null);
-    } else {
-      setExpandedMovieId(id);
-    }
-  };
+  }, [loadData, query]);
 
   return isLoading ? (
     <div>Loading...</div>
   ) : (
     <div className={styles.moviesMain}>
-      <div className={styles.moviesSegment}>
-        <SegmentedControl
-          className={styles.segmentedControl}
-          onChange={handleSelected}
-          color={colorMap.get(selected)}
-          data={['Popular', 'Top Rated', 'Now Playing', 'Upcoming']}
-        />
-      </div>
       <div className={styles.moviesList}>
         {movies.map((movie: Movie) => (
           <div key={movie.id} className={styles.movieCard}>
@@ -137,7 +106,7 @@ export default function MoviesList() {
                           leftSection={<IconHeart style={{ width: rem(14), height: rem(14) }} />}
                           onClick={() => {
                             const currentMovieId = movie.id; // Properly reference the id of the movie here
-                            if (favourites.includes(currentMovieId)) {
+                            if (isInList(currentMovieId, favourites)) {
                               // Movie is already in favourites, so run code to remove it
                               removeFromFavourites(currentMovieId);
                             } else {
@@ -146,9 +115,12 @@ export default function MoviesList() {
                             }
                           }}
                         >
-                          {favourites.includes(movie.id)
-                            ? 'Remove from Favourites'
-                            : 'Add to Favourites'}
+                          {
+                            // @ts-ignore
+                            isInList(movie.id, favourites)
+                              ? 'Remove from Favourites'
+                              : 'Add to Favourites'
+                          }
                         </Menu.Item>
                         <Menu.Item
                           leftSection={
@@ -156,29 +128,41 @@ export default function MoviesList() {
                           }
                           onClick={() => {
                             const currentMovieId = movie.id; // Properly reference the id of the movie here
-                            if (watchlist.includes(currentMovieId)) {
+                            // @ts-ignore
+                            if (isInList(currentMovieId, watchlist)) {
+                              // Movie is already in favourites, so run code to remove it
                               removeFromWatchList(currentMovieId);
                             } else {
+                              // Movie is not in favourites, so run code to add it
                               addToWatchList(currentMovieId);
                             }
                           }}
                         >
-                          {watchlist.includes(movie.id)
-                            ? 'Remove from Watchlist'
-                            : 'Add to Watchlist'}
+                          {
+                            // @ts-ignore
+                            isInList(movie.id, watchlist)
+                              ? 'Remove from Watchlist'
+                              : 'Add to Watchlist'
+                          }
                         </Menu.Item>
                         <Menu.Item
                           leftSection={<IconChecks style={{ width: rem(14), height: rem(14) }} />}
                           onClick={() => {
                             const currentMovieId = movie.id; // Properly reference the id of the movie here
-                            if (watched.includes(currentMovieId)) {
+                            // @ts-ignore
+                            if (isInList(currentMovieId, watched)) {
+                              // Movie is already in favourites, so run code to remove it
                               removeFromWatched(currentMovieId);
                             } else {
+                              // Movie is not in favourites, so run code to add it
                               addToWatched(currentMovieId);
                             }
                           }}
                         >
-                          {watched.includes(movie.id) ? 'Remove from Watched' : 'Add to Watched'}
+                          {
+                            // @ts-ignore
+                            isInList(movie.id, watched) ? 'Remove from Watched' : 'Add to Watched'
+                          }
                         </Menu.Item>
                       </>
                     ) : (
@@ -197,16 +181,6 @@ export default function MoviesList() {
                 </Menu>
               </div>
             </div>
-            <p>Release date: {movie.release_date}</p>
-            <p>Rating: {Math.round(movie.vote_average * 10)}%</p>
-            <p>
-              {expandedMovieId === movie.id || movie.overview.length <= 100
-                ? movie.overview
-                : `${movie.overview.slice(0, 100)}...`}
-            </p>
-            <button type="button" onClick={() => handleMoreInfo(movie.id)}>
-              {expandedMovieId === movie.id ? 'Less Info' : 'More Info'}
-            </button>
           </div>
         ))}
       </div>

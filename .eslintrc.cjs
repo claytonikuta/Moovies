@@ -22,5 +22,7 @@ module.exports = {
     'import/no-mutable-exports': 'off',
     'arrow-body-style': 'off',
     'object-shorthand': 'off',
+    '@typescript-eslint/dot-notation': 'off',
+    'prefer-destructuring': 'off',
   },
 };

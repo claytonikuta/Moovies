@@ -2,7 +2,7 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import axios from 'axios';
 
-const API_KEY = process.env.NEXT_PUBLIC_MOVIEDB_API_KEY;
+const API_KEY = process.env.MOVIEDB_API_KEY;
 
 type MovieData = {
   id: number;
@@ -20,36 +20,51 @@ export default function handler(
   res: NextApiResponse<MovieData[] | { error: string }>
 ) {
   if (req.method === 'GET') {
+    const page = parseInt(req.query.page as string, 10) || 1;
     const listType = req.query.listType || 'Popular'; // Default to 'popular' if no listType is specified
 
     let apiUrl;
+    const currentDate = new Date();
+    currentDate.setDate(currentDate.getDate() + 4); // Add 4 days to the current date
+
+    const params: Record<string, any> = {
+      api_key: API_KEY,
+      page: 1,
+    };
+
     switch (listType) {
       case 'Popular':
         apiUrl = 'https://api.themoviedb.org/3/movie/popular';
-        console.log('A');
+        params['region'] = 'US';
+        params['language'] = 'en-US';
+        params['sort_by'] = 'popularity.desc';
         break;
       case 'Top Rated':
         apiUrl = 'https://api.themoviedb.org/3/movie/top_rated';
-        console.log('B');
-        break;
-      case 'Now Playing':
-        apiUrl = 'https://api.themoviedb.org/3/movie/now_playing';
-        console.log('C');
+        params['region'] = 'US';
+        params['language'] = 'en-US';
+        params['sort_by'] = 'popularity.desc';
         break;
       case 'Upcoming':
         apiUrl = 'https://api.themoviedb.org/3/movie/upcoming';
-        console.log('D');
+        params['region'] = 'US';
+        params['language'] = 'en-US';
+        params['sort_by'] = 'popularity.desc';
+        break;
+      case 'Now Playing':
+        apiUrl = 'https://api.themoviedb.org/3/movie/now_playing';
+        params['region'] = 'US';
+        params['language'] = 'en-US';
+        params['sort_by'] = 'popularity.desc';
         break;
       default:
         apiUrl = 'https://api.themoviedb.org/3/movie/popular';
     }
+    params['page'] = page;
 
     axios
       .get(apiUrl, {
-        params: {
-          api_key: API_KEY,
-          page: 1,
-        },
+        params: params,
       })
       .then((response) => {
         const data = response.data.results.slice(0, 12);

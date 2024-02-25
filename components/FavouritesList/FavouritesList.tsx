@@ -6,11 +6,10 @@ import { Menu, Button, rem } from '@mantine/core';
 import { IconChecks, IconClockPlus, IconPlaylistAdd, IconHeart } from '@tabler/icons-react';
 import useMovieLists from '../../hooks/useMovieLists';
 import styles from './FavouritesList.module.css';
-// import { watch } from 'fs';
 
 const FavouritesList = () => {
   const {
-    // favourites,
+    favourites,
     watched,
     watchlist,
     addToFavourites,
@@ -18,6 +17,7 @@ const FavouritesList = () => {
     addToWatchList,
     removeFromWatchList,
     addToWatched,
+    loadData,
     removeFromWatched,
   } = useMovieLists();
   interface Movie {
@@ -28,28 +28,33 @@ const FavouritesList = () => {
     release_date: string;
     vote_average: number;
   }
-  const isInList = (movieId: number, list: number[]) => list.includes(movieId);
 
-  const [favourites, setFavourites] = useState<Movie[]>([]);
-  const favouritesIds = favourites.map((movie) => movie.id); // Create an array of IDs from favourites
+  const [isLoading, setIsLoading] = useState(true);
+  const [favouritesList, setFavourites] = useState<Movie[]>([]);
 
   useEffect(() => {
-    const fetchFavourites = async () => {
-      try {
-        const response = await axios.get('/api/favourites');
+    setIsLoading(true);
+    axios
+      .get('/api/favourites')
+      .then((response) => {
         setFavourites(response.data);
-      } catch (error) {
-        console.error('An error occurred while fetching favourites:', error);
-      }
-    };
+        setIsLoading(false);
+      })
+      .catch((error) => {
+        console.error('An error occurred while fetching data from the MovieDB API', error);
+        setIsLoading(false);
+      });
+    loadData().then(() => {
+      setIsLoading(false);
+    });
+  }, [loadData]);
 
-    fetchFavourites();
-  }, []);
-
-  return (
+  return isLoading ? (
+    <div>Loading...</div>
+  ) : (
     <div className={styles.moviesList}>
-      {favourites.length > 0 ? (
-        favourites.map((movie) => (
+      {favouritesList.length > 0 ? (
+        favouritesList.map((movie) => (
           <div key={movie.id} className={styles.movieCard}>
             <h2>{movie.title}</h2>
             <div className={styles.posterWrapper}>
@@ -80,14 +85,20 @@ const FavouritesList = () => {
                     <Menu.Item
                       leftSection={<IconHeart style={{ width: rem(14), height: rem(14) }} />}
                       onClick={() => {
-                        if (isInList(movie.id, favouritesIds)) {
-                          removeFromFavourites(movie.id);
+                        const currentMovieId = movie.id;
+                        if (favourites.includes(currentMovieId)) {
+                          // Movie is already in favourites, so run code to remove it
+                          removeFromFavourites(currentMovieId);
+                          setFavourites((prevFavourites) =>
+                            prevFavourites.filter((fav) => fav.id !== currentMovieId)
+                          );
                         } else {
-                          addToFavourites(movie.id);
+                          // Movie is not in favourites, so run code to add it
+                          addToFavourites(currentMovieId);
                         }
                       }}
                     >
-                      {isInList(movie.id, favouritesIds)
+                      {favourites.includes(movie.id)
                         ? 'Remove from Favourites'
                         : 'Add to Favourites'}
                     </Menu.Item>
@@ -95,8 +106,7 @@ const FavouritesList = () => {
                       leftSection={<IconClockPlus style={{ width: rem(14), height: rem(14) }} />}
                       onClick={() => {
                         const currentMovieId = movie.id; // Properly reference the id of the movie here
-
-                        if (isInList(currentMovieId, watchlist)) {
+                        if (watchlist.includes(currentMovieId)) {
                           // Movie is already in favourites, so run code to remove it
                           removeFromWatchList(currentMovieId);
                         } else {
@@ -105,14 +115,13 @@ const FavouritesList = () => {
                         }
                       }}
                     >
-                      {isInList(movie.id, watchlist) ? 'Remove from Watchlist' : 'Add to Watchlist'}
+                      {watchlist.includes(movie.id) ? 'Remove from Watchlist' : 'Add to Watchlist'}
                     </Menu.Item>
                     <Menu.Item
                       leftSection={<IconChecks style={{ width: rem(14), height: rem(14) }} />}
                       onClick={() => {
                         const currentMovieId = movie.id; // Properly reference the id of the movie here
-
-                        if (isInList(currentMovieId, watched)) {
+                        if (watched.includes(currentMovieId)) {
                           // Movie is already in favourites, so run code to remove it
                           removeFromWatched(currentMovieId);
                         } else {
@@ -121,7 +130,7 @@ const FavouritesList = () => {
                         }
                       }}
                     >
-                      {isInList(movie.id, watched) ? 'Remove from Watched' : 'Add to Watched'}
+                      {watched.includes(movie.id) ? 'Remove from Watched' : 'Add to Watched'}
                     </Menu.Item>
                   </Menu.Dropdown>
                 </Menu>

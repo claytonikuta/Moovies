@@ -5,7 +5,7 @@ import { getSession } from 'next-auth/react';
 import { WatchList } from '../../../models/watchlist';
 import mongooseConnector from '../../../lib/db/mongooseConnect';
 
-const API_KEY = process.env.NEXT_PUBLIC_MOVIEDB_API_KEY;
+const API_KEY = process.env.MOVIEDB_API_KEY;
 
 const fetchMovieDetails = async (movieId: string) => {
   try {

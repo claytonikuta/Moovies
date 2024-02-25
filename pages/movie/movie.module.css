@@ -37,10 +37,11 @@
   display: inline-block;
   margin-right: 10px;
   padding: 5px 10px;
-  background-color: #007bff;
+  background-color: #f59f00;
   color: #fff;
   border-radius: 20px;
   font-size: 0.85rem;
+  font-weight: bold;
 }
 
 .rating,
@@ -68,6 +69,32 @@
   height: 100%;
   border: none;
   border-radius: 4px;
+}
+
+.pillButtonContainer {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+.pillButton {
+  border: none;
+  border-radius: 10px;
+  padding: 8px 18px;
+  background-color: #4c6ef5;
+  color: #ffffff;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  font-size: 0.9rem;
+  font-weight: bold;
+}
+
+.pillButtonActive {
+  background-color: #e64980;
+  color: #ffffff;
+  font-weight: bold;
 }
 
 @media (max-width: 1024px) {

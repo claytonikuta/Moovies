@@ -2,9 +2,9 @@
 import Link from 'next/link';
 import { useState } from 'react';
 import {
-  Autocomplete,
+  // Autocomplete,
   Group,
-  rem,
+  // rem,
   Button,
   Popover,
   ButtonProps,
@@ -12,7 +12,8 @@ import {
   Transition,
 } from '@mantine/core';
 import { useMediaQuery } from '@mantine/hooks';
-import { IconSearch } from '@tabler/icons-react';
+// import { useRouter } from 'next/router';
+// import { IconSearch } from '@tabler/icons-react';
 import { signOut, signIn, useSession } from 'next-auth/react';
 import Head from 'next/head';
 import GoogleIcon from './GoogleIcon'; // Update the import statement
@@ -36,11 +37,19 @@ export function GoogleButton(props: ButtonProps & React.ComponentPropsWithoutRef
 }
 
 export default function Navbar() {
+  // const router = useRouter();
   const { status } = useSession();
   const [opened, setOpened] = useState(false);
   const isLargeScreen = useMediaQuery('(min-width: 1024px)'); // This will return true if the screen width is 1024px or larger
 
   const toggleBurgerMenu = () => setOpened((o) => !o);
+
+  // const handleSearch = (value: string) => {
+  //   // Redirect to dynamic search page with query as route parameter
+  //   if (value.trim()) {
+  //     router.push(`/search/${encodeURIComponent(value.trim())}`);
+  //   }
+  // };
 
   const links =
     status === 'authenticated'
@@ -92,19 +101,25 @@ export default function Navbar() {
               overflowY: 'auto', // Makes it scrollable if content height exceeds maximum height
             }}
           >
-            <Autocomplete
+            {/* <Autocomplete
               className={styles.search}
               placeholder="Search"
               leftSection={<IconSearch style={{ width: rem(16), height: rem(16) }} stroke={1.5} />}
               data={['']}
               visibleFrom="xs"
+              onChange={(value: string) => handleSearch(value)}
+              onKeyDown={(event: React.KeyboardEvent<HTMLInputElement>) => {
+                if (event.key === 'Enter') {
+                  handleSearch(event.currentTarget.value);
+                }
+              }}
               style={{
                 width: '100%',
                 alignSelf: 'center',
                 marginRight: '0px',
                 marginBottom: '5px',
               }}
-            />
+            /> */}
             {items.map((item) => (
               <div key={`mobile-${item.key}`}>{item}</div>
             ))}
@@ -142,13 +157,12 @@ export default function Navbar() {
           onClick={toggleBurgerMenu}
           onKeyDown={(e) => {
             if (e.key === 'Escape') {
-              // Close the menu if 'Escape' is pressed
               toggleBurgerMenu();
             }
           }}
-          role="button" // Add a role to indicate interactiveness
-          tabIndex={0} // Add tabIndex to make the div focusable
-          aria-label="Close menu" // Add an aria-label for screen readers
+          role="button"
+          tabIndex={0}
+          aria-label="Close menu"
           style={{
             position: 'fixed',
             top: 0,
@@ -172,13 +186,19 @@ export default function Navbar() {
             >
               {items}
             </Group>
-            <Autocomplete
+            {/* <Autocomplete
               className={styles.search}
               placeholder="Search"
               leftSection={<IconSearch style={{ width: rem(16), height: rem(16) }} stroke={1.5} />}
               data={['']}
               visibleFrom="xs"
-            />
+              onChange={(value: string) => handleSearch(value)}
+              onKeyDown={(event: React.KeyboardEvent<HTMLInputElement>) => {
+                if (event.key === 'Enter') {
+                  handleSearch(event.currentTarget.value);
+                }
+              }}
+            /> */}
             {status === 'authenticated' ? (
               <Button
                 color="red"

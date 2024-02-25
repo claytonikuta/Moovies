@@ -54,6 +54,10 @@
   position: relative;
 }
 
+.posterWrapper img {
+  cursor: pointer;
+}
+
 .menuWrapper {
   position: absolute;
   top: 0;

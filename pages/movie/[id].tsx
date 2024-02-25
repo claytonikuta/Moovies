@@ -2,10 +2,10 @@ import { useRouter } from 'next/router';
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 import Carousel from 'react-multi-carousel';
+import { useSession } from 'next-auth/react';
 import 'react-multi-carousel/lib/styles.css';
+import useMovieLists from '../../hooks/useMovieLists';
 import styles from './movie.module.css';
-
-const API_KEY = process.env.NEXT_PUBLIC_MOVIEDB_API_KEY;
 
 interface Movie {
   id: number;
@@ -27,30 +27,33 @@ interface Genre {
 }
 
 export default function Movie() {
+  const {
+    favourites,
+    watched,
+    watchlist,
+    addToFavourites,
+    removeFromFavourites,
+    addToWatchList,
+    removeFromWatchList,
+    addToWatched,
+    removeFromWatched,
+  } = useMovieLists();
+
   const router = useRouter();
   const { id } = router.query;
   const [movie, setMovie] = useState<Movie | null>(null);
   const [trailers, setTrailers] = useState<Trailer[]>([]);
   const [genres, setGenres] = useState<Genre[]>([]);
+  const { status } = useSession();
 
   const fetchMovieDetails = async (movieId: string | string[]) => {
     try {
-      const [movieResponse, trailersResponse] = await Promise.all([
-        axios.get(`https://api.themoviedb.org/3/movie/${movieId}`, {
-          params: {
-            api_key: API_KEY,
-          },
-        }),
-        axios.get(`https://api.themoviedb.org/3/movie/${movieId}/videos`, {
-          params: {
-            api_key: API_KEY,
-          },
-        }),
-      ]);
-
-      setMovie(movieResponse.data);
-      setTrailers(trailersResponse.data.results.filter((video: any) => video.type === 'Trailer'));
-      setGenres(movieResponse.data.genres);
+      // Call the local API route
+      const res = await axios.get(`/api/movie/${movieId}`);
+      const { movie: movieDetails, trailers: movieTrailers, genres: movieGenres } = res.data; // Rename "movie" to "movieDetails"
+      setMovie(movieDetails); // Update to use "movieDetails"
+      setTrailers(movieTrailers);
+      setGenres(movieGenres);
     } catch (error) {
       console.error('An error occurred while fetching movie details', error);
     }
@@ -76,6 +79,54 @@ export default function Movie() {
           alt={movie.title}
         />
       )}
+      <div>
+        {status === 'authenticated' && (
+          <div className={styles.pillButtonContainer}>
+            <button
+              type="button"
+              className={`${styles.pillButton} ${favourites.includes(movie.id) ? styles.pillButtonActive : ''}`}
+              onClick={() => {
+                const currentMovieId = movie.id;
+                if (favourites.includes(currentMovieId)) {
+                  removeFromFavourites(currentMovieId);
+                } else {
+                  addToFavourites(currentMovieId);
+                }
+              }}
+            >
+              {favourites.includes(movie.id) ? 'Remove from Favourites' : 'Add to Favourites'}
+            </button>
+            <button
+              type="button"
+              className={`${styles.pillButton} ${watchlist.includes(movie.id) ? styles.pillButtonActive : ''}`}
+              onClick={() => {
+                const currentMovieId = movie.id;
+                if (watchlist.includes(currentMovieId)) {
+                  removeFromWatchList(currentMovieId);
+                } else {
+                  addToWatchList(currentMovieId);
+                }
+              }}
+            >
+              {watchlist.includes(movie.id) ? 'Remove from Watchlist' : 'Add to Watchlist'}
+            </button>
+            <button
+              type="button"
+              className={`${styles.pillButton} ${watched.includes(movie.id) ? styles.pillButtonActive : ''}`}
+              onClick={() => {
+                const currentMovieId = movie.id;
+                if (watched.includes(currentMovieId)) {
+                  removeFromWatched(currentMovieId);
+                } else {
+                  addToWatched(currentMovieId);
+                }
+              }}
+            >
+              {watched.includes(movie.id) ? 'Remove from Watched' : 'Add to Watched'}
+            </button>
+          </div>
+        )}
+      </div>
       <p className={styles.overview}>{movie.overview}</p>
       <div className={styles.genres}>
         <strong>Genres: </strong>
@@ -137,9 +188,8 @@ export default function Movie() {
           swipeable
         >
           {trailers.map((trailer) => (
-            <div className={styles.iframeContainer}>
+            <div key={trailer.id} className={styles.iframeContainer}>
               <iframe
-                key={trailer.id}
                 title={movie.title}
                 src={`https://www.youtube.com/embed/${trailer.key}`}
                 frameBorder="0"

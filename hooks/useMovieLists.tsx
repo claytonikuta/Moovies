@@ -8,11 +8,6 @@ export default function useMovieLists() {
   const [watchlist, setWatchlist] = useState<number[]>([]);
   const [watched, setWatched] = useState<number[]>([]);
 
-  interface Movie {
-    _id: string; // Use the correct property name and type.
-    // Add other properties as needed.
-  }
-
   // Wrap loadData in useCallback to memorize it between renders
   const loadData = useCallback(async () => {
     try {
@@ -22,24 +17,13 @@ export default function useMovieLists() {
         axios.get('/api/watched'),
       ]);
 
-      // Use the map function to extract just the IDs from each movie object
-      const favouritesIds = favouritesResponse.data.map((movie: Movie) => movie._id); // Use the correct identifier attribute, e.g., movie.id or movie._id
-      const watchlistIds = watchlistResponse.data.map((movie: Movie) => movie._id);
-      const watchedIds = watchedResponse.data.map((movie: Movie) => movie._id);
-
-      // Log the transformed arrays of IDs
-      console.log('Fetched favourites IDs:', favouritesIds);
-      console.log('Fetched watchlist IDs:', watchlistIds);
-      console.log('Fetched watched IDs:', watchedIds);
-
-      // Update state with the new arrays of IDs
-      setFavourites(favouritesIds);
-      setWatchlist(watchlistIds);
-      setWatched(watchedIds);
+      setFavourites(favouritesResponse.data.map((movie: any) => movie.id));
+      setWatchlist(watchlistResponse.data.map((movie: any) => movie.id));
+      setWatched(watchedResponse.data.map((movie: any) => movie.id));
     } catch (error) {
       console.error('An error occurred while fetching lists.', error);
     }
-  }, [setFavourites, setWatchlist, setWatched]); // Dependencies array is empty, meaning it only creates this function once
+  }, [setFavourites, setWatchlist, setWatched]);
 
   const addToFavourites = async (movieId: number) => {
     try {
@@ -56,7 +40,7 @@ export default function useMovieLists() {
   const removeFromFavourites = async (movieId: number) => {
     try {
       const response = await axios.delete(`/api/favourites/${movieId}`);
-      if (response.status === 200) {
+      if (response.status === 200 || response.status === 204) {
         setFavourites((prevFavourites) => prevFavourites.filter((id) => id !== movieId));
       }
     } catch (error) {
@@ -79,7 +63,7 @@ export default function useMovieLists() {
   const removeFromWatched = async (movieId: number) => {
     try {
       const response = await axios.delete(`/api/watched/${movieId}`);
-      if (response.status === 200) {
+      if (response.status === 200 || response.status === 204) {
         setWatched((prevWatched) => prevWatched.filter((id) => id !== movieId));
       }
     } catch (error) {
@@ -101,7 +85,7 @@ export default function useMovieLists() {
   const removeFromWatchList = async (movieId: number) => {
     try {
       const response = await axios.delete(`/api/watchlist/${movieId}`);
-      if (response.status === 200) {
+      if (response.status === 200 || response.status === 204) {
         setWatchlist((prevWatchList) => prevWatchList.filter((id) => id !== movieId));
       }
     } catch (error) {
