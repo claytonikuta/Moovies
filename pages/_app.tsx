@@ -1,12 +1,9 @@
-// pages/_app.tsx
-
 import '@mantine/core/styles.css';
 import type { AppProps } from 'next/app';
 import Head from 'next/head';
 import { MantineProvider } from '@mantine/core';
 import { SessionProvider } from 'next-auth/react';
 // import { theme } from '../theme';
-import { SearchProvider } from '../context/SearchContext';
 import Navbar from '../components/Navbar/Navbar';
 
 export default function App({ Component, pageProps }: AppProps) {
@@ -21,11 +18,9 @@ export default function App({ Component, pageProps }: AppProps) {
         />
         <link rel="shortcut icon" href="/favicon.svg" />
       </Head>
-      <SessionProvider>
-        <SearchProvider>
-          <Navbar />
-          <Component {...pageProps} />
-        </SearchProvider>
+      <SessionProvider session={pageProps.session}>
+        <Navbar />
+        <Component {...pageProps} />
       </SessionProvider>
     </MantineProvider>
   );
