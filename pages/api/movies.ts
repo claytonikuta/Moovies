@@ -15,24 +15,25 @@ type MovieData = {
   genres: { id: number; name: string }[];
 };
 
-export default function handler(
+export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse<MovieData[] | { error: string }>
 ) {
   const searchQuery = req.query.search as string | undefined;
+  const page = parseInt(req.query.page as string, 10) || 1;
 
   if (req.method === 'GET') {
-    const page = parseInt(req.query.page as string, 10) || 1;
     const listType = req.query.listType || 'Popular';
 
-    let apiUrl;
     const currentDate = new Date();
     currentDate.setDate(currentDate.getDate() + 4);
 
     const params: Record<string, any> = {
       api_key: API_KEY,
-      page: 1,
+      language: 'en-US',
+      page: page,
     };
+    let apiUrl;
     if (searchQuery) {
       apiUrl = 'https://api.themoviedb.org/3/search/movie';
       params['query'] = searchQuery;
@@ -68,19 +69,22 @@ export default function handler(
     }
     params['page'] = page;
 
-    axios
-      .get(apiUrl, {
-        params: params,
-      })
-      .then((response) => {
-        const data = response.data.results.slice(0, 12);
-        res.status(200).json(data);
-      })
-      .catch(() => {
-        res
-          .status(500)
-          .json({ error: 'An error occurred while fetching data from the MovieDB API' });
-      });
+    try {
+      const allMovies: MovieData[] = [];
+      let totalPages = 1;
+      do {
+        const { data } = await axios.get(apiUrl, { params });
+        allMovies.push(...data.results);
+
+        totalPages = data.total_pages;
+        params.page += 1;
+      } while (allMovies.length < 24 && params.page <= totalPages && params.page <= page + 1);
+
+      res.status(200).json(allMovies.slice(0, 24));
+    } catch (error) {
+      console.error('Error fetching data from the MovieDB API:', error);
+      res.status(500).json({ error: 'An error occurred while fetching data from the MovieDB API' });
+    }
   } else {
     res.status(405).json({ error: 'Invalid request method' });
   }
