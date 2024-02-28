@@ -24,5 +24,6 @@ module.exports = {
     'object-shorthand': 'off',
     '@typescript-eslint/dot-notation': 'off',
     'prefer-destructuring': 'off',
+    'no-await-in-loop': 'off',
   },
 };

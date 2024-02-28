@@ -1,6 +1,14 @@
 // components/MoviesList/MoviesList.tsx
 import { useEffect, useState } from 'react';
-import { TextInput, SegmentedControl, Menu, Button, rem, ButtonProps } from '@mantine/core';
+import {
+  TextInput,
+  SegmentedControl,
+  Menu,
+  Button,
+  rem,
+  ButtonProps,
+  CloseButton,
+} from '@mantine/core';
 import axios from 'axios';
 import Link from 'next/link';
 import { IconChecks, IconClockPlus, IconPlaylistAdd, IconHeart } from '@tabler/icons-react';
@@ -57,7 +65,7 @@ export default function MoviesList() {
   const { status } = useSession();
 
   useEffect(() => {
-    let isMounted = true; // Flag to prevent state update if unmounted
+    let isMounted = true;
 
     const fetchMovies = async () => {
       setIsLoading(true);
@@ -118,10 +126,19 @@ export default function MoviesList() {
   const fetchMoreMovies = async () => {
     try {
       const nextPage = page + 1;
-      const response = await axios.get(`/api/movies/?listType=${selected}&page=${nextPage}`);
-      setMovies((currentMovies) => [...currentMovies, ...response.data]);
-      setPage(nextPage);
-      setHasMore(response.data.length > 0);
+      const response = await axios.get('/api/movies/', {
+        params: {
+          ...(searchQuery && { search: searchQuery }), // Include search parameter if it exists
+          listType: selected,
+          page: nextPage,
+        },
+      });
+      if (response.data.length) {
+        setMovies((currentMovies) => [...currentMovies, ...response.data]);
+        setPage(nextPage);
+      } else {
+        setHasMore(false);
+      }
     } catch (error) {
       console.error('Failed to fetch more movies', error);
     }
@@ -156,7 +173,19 @@ export default function MoviesList() {
             placeholder="Search for movies..."
             value={searchQuery}
             onChange={(event) => setSearchQuery(event.currentTarget.value)}
-            style={{ marginBottom: '15px' }}
+            rightSection={
+              searchQuery && (
+                <CloseButton
+                  onClick={() => {
+                    setSearchQuery('');
+                    handleSelected('Popular');
+                  }}
+                  title="Clear search"
+                  size={16}
+                />
+              )
+            }
+            rightSectionWidth={42}
           />
         </div>
         <SegmentedControl
@@ -168,13 +197,13 @@ export default function MoviesList() {
         />
       </div>
       {isSwitching ? (
-        <div>Loading new category...</div>
-      ) : (
+        <div style={{ marginLeft: '10px' }}>Loading new category...</div>
+      ) : movies.length > 0 ? (
         <InfiniteScroll
           dataLength={movies.length}
           next={fetchMoreMovies}
           hasMore={hasMore}
-          loader={<h4>Loading...</h4>}
+          loader={<h4 style={{ marginLeft: '10px' }}>Loading...</h4>}
           endMessage={<p>You have seen it all</p>}
         >
           <div className={styles.moviesList}>
@@ -284,6 +313,8 @@ export default function MoviesList() {
             ))}
           </div>
         </InfiniteScroll>
+      ) : (
+        <div style={{ marginLeft: '10px' }}>No movies found. Try a different search.</div>
       )}
     </div>
   );
