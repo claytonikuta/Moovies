@@ -128,7 +128,7 @@ export default function MoviesList() {
       const nextPage = page + 1;
       const response = await axios.get('/api/movies/', {
         params: {
-          ...(searchQuery && { search: searchQuery }), // Include search parameter if it exists
+          ...(searchQuery && { search: searchQuery }),
           listType: selected,
           page: nextPage,
         },
